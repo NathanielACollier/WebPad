@@ -26,8 +26,11 @@ namespace WebPad
         private readonly HtmlRenderer _resultsRenderer;
 
         #region Commands and Binding
-
+        // edit menu
         public static readonly RoutedCommand CommandReferences = new RoutedCommand();
+        public static readonly RoutedCommand CommandEditFileOptions = new RoutedCommand();
+
+        // other
         public static readonly RoutedCommand CommandBuildExecute = new RoutedCommand();
 
         // File Commands
@@ -60,9 +63,16 @@ namespace WebPad
 
         private void BindCommands()
         {
+            // edit menu
             MenuReferences.Command = CommandReferences;
             CommandBindings.Add(new CommandBinding(CommandReferences, ExecuteReferences));
             CommandReferences.InputGestures.Add(new KeyGesture(Key.F4));
+
+
+            MenuEditFileOptions.Command = CommandEditFileOptions;
+            CommandBindings.Add(new CommandBinding(CommandEditFileOptions, ExecuteEditFileOptions));
+
+            // other
 
             MenuExecute.Command = CommandBuildExecute;
             CommandBindings.Add(new CommandBinding(CommandBuildExecute, ExecuteBuild));
@@ -250,6 +260,21 @@ namespace WebPad
             return null;
         }
 
+
+        private void ExecuteEditFileOptions(object sender, ExecutedRoutedEventArgs e)
+        {
+            var currentDoc = GetSelectedTabSnippetDocumentControl();
+
+            if( currentDoc == null)
+            {
+                log.Error("Current tab is not a snippet document control so we cannot edit file options");
+                return;
+            }
+
+            var dialog = new ChildWindows.EditSnippetOptionsWindow(currentDoc);
+            dialog.ShowDialog();
+
+        }
 
         private void ExecuteReferences(object sender, ExecutedRoutedEventArgs e)
         {

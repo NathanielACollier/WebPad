@@ -18,14 +18,28 @@ namespace WebPad.Persistence
         public Snippet(SnippetDocumentControl snippetControl)
         {
             this.CSS = snippetControl.CSS;
-            this.Html = snippetControl.Html;
+
+            if(string.IsNullOrWhiteSpace(snippetControl.ExternalHtmlPath))
+            {
+                this.Html = snippetControl.Html;
+            }else
+            {
+                this.Html = ""; // clear it out if it somehow had something
+                this.externalHtmlFile = snippetControl.ExternalHtmlPath;
+            }
+            
             this.Javascript = snippetControl.Javascript;
             this.References = snippetControl.References;
+
+            
         }
 
         public string Html { get; set; }
         public string Javascript { get; set; }
         public string CSS { get; set; }
         public Rendering.References References { get; set; }
+
+
+        public string externalHtmlFile { get; set; }
     }
 }

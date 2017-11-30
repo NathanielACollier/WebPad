@@ -76,6 +76,9 @@ namespace WebPad.UserControls
 
         public Rendering.References References { get; set; }
 
+
+        public string ExternalHtmlPath { get; set; }
+
         public string Javascript
         {
             get { return txtJavascript.Text; }

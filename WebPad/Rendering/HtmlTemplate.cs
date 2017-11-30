@@ -16,14 +16,15 @@ namespace WebPad.Rendering
             return _basePageHtml.AsTemplated(new
             {
                 //References = snippetDocControl.References.GetHtml(),
-                jsRefs = References.GetHtml( snippetDocControl.References.Where(i=>i.Type == ReferenceTypes.Javascript)
+                jsRefs = References.GetHtml(snippetDocControl.References.Where(i => i.Type == ReferenceTypes.Javascript)
                 ),
-                cssRefs = References.GetHtml( snippetDocControl.References.Where(i=>i.Type == ReferenceTypes.Css)
+                cssRefs = References.GetHtml(snippetDocControl.References.Where(i => i.Type == ReferenceTypes.Css)
                     ),
                 Javascript = snippetDocControl.Javascript,
                 Html = snippetDocControl.Html,
                 CSS = snippetDocControl.CSS,
-                PageTitle = snippetDocControl.SaveFileName
+                PageTitle = snippetDocControl.SaveFileName,
+                BaseHref = string.IsNullOrWhiteSpace(snippetDocControl.BaseHref) ? "/" : snippetDocControl.BaseHref
             });
         }
     }

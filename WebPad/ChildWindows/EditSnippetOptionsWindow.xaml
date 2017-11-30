@@ -10,12 +10,19 @@
     <Window.DataContext>
         <local:EditSnippetOptionsWindowModel />
     </Window.DataContext>
-    <DockPanel>
+    <DockPanel LastChildFill="False" ScrollViewer.VerticalScrollBarVisibility="Visible">
         <DockPanel DockPanel.Dock="Top">
             <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path"></TextBlock>
             <ncControls:FilePicker Margin="10,0,0,0" DockPanel.Dock="Left" FilePath="{Binding Path=ExternalHtmlTemplatePath, Mode=TwoWay}" FilePathChanged="ExternalHtmlTemplatePathFilePicker_FilePathChanged"></ncControls:FilePicker>
         </DockPanel>
 
-        <DockPanel></DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <TextBlock DockPanel.Dock="Left" Text="Base href"></TextBlock>
+            <TextBox Text="{Binding Path=BaseHref, Mode=TwoWay}" TextChanged="BaseHrefTextBox_TextChanged" />
+        </DockPanel>
+
+        <DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
+            <Button Content="Save" Name="SaveOptionsButton" Click="SaveOptionsButton_Click"></Button>
+        </DockPanel>
     </DockPanel>
 </Window>

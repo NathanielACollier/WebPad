@@ -31,7 +31,7 @@ namespace WebPad.Persistence
             this.Javascript = snippetControl.Javascript;
             this.References = snippetControl.References;
 
-            
+            this.baseHref = snippetControl.BaseHref;
         }
 
         public string Html { get; set; }
@@ -40,6 +40,7 @@ namespace WebPad.Persistence
         public Rendering.References References { get; set; }
 
 
-        public string externalHtmlFile { get; set; }
+        public string externalHtmlFile { get; set; } // this is to be able to edit angularjs component templates that are just html fragments
+        public string baseHref { get; set; } // this is like <head><base href="" /></head>
     }
 }

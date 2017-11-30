@@ -27,38 +27,69 @@ namespace WebPad.ChildWindows
             this.DocumentControl = _docControl; // keep a reference to this
             var context = this.DataContext as EditSnippetOptionsWindowModel;
             context.ExternalHtmlTemplatePath = _docControl.ExternalHtmlPath;
+            context.BaseHref = _docControl.BaseHref;
         }
 
         public WebPad.UserControls.SnippetDocumentControl DocumentControl { get; set; }
 
         private void ExternalHtmlTemplatePathFilePicker_FilePathChanged(object sender, EventArgs e)
         {
-            var context = this.DataContext as EditSnippetOptionsWindowModel;
-
             // make sure window is initialized
             if( this.DocumentControl != null)
             {
-                if (System.IO.File.Exists(this.DocumentControl.SaveFilePath))
-                {
-                    if (System.IO.File.Exists(context.ExternalHtmlTemplatePath))
-                    {
-                        this.DocumentControl.ExternalHtmlPath = Utilities.PathUtilities.MakeRelativePath(this.DocumentControl.SaveFilePath, context.ExternalHtmlTemplatePath);
 
-                        var absolute = Utilities.PathUtilities.MakeAbsolutePath(full:this.DocumentControl.SaveFilePath, relative:this.DocumentControl.ExternalHtmlPath);
-                        this.DocumentControl.Html = System.IO.File.ReadAllText(context.ExternalHtmlTemplatePath);
-                    }
-                    else
-                    {
-                        log.Error($"External html file path [{context.ExternalHtmlTemplatePath}] does not exist");
-                    }
-
-                }
-
+                saveExternalHtmlSetting();
             }
             // end of file picker filepath changed
         }
 
 
+        private void saveExternalHtmlSetting()
+        {
+            var context = this.DataContext as EditSnippetOptionsWindowModel;
+            if (System.IO.File.Exists(this.DocumentControl.SaveFilePath))
+            {
+                if (System.IO.File.Exists(context.ExternalHtmlTemplatePath))
+                {
+                    this.DocumentControl.ExternalHtmlPath = Utilities.PathUtilities.MakeRelativePath(this.DocumentControl.SaveFilePath, context.ExternalHtmlTemplatePath);
 
+                    var absolute = Utilities.PathUtilities.MakeAbsolutePath(full: this.DocumentControl.SaveFilePath, relative: this.DocumentControl.ExternalHtmlPath);
+                    this.DocumentControl.Html = System.IO.File.ReadAllText(context.ExternalHtmlTemplatePath);
+                }
+                else
+                {
+                    log.Error($"External html file path [{context.ExternalHtmlTemplatePath}] does not exist");
+                }
+
+            }
+        }
+
+        private void BaseHrefTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var context = this.DataContext as EditSnippetOptionsWindowModel;
+
+            if( this.DocumentControl != null)
+            {
+                saveBaseHref();
+            }
+        }
+
+        private void saveBaseHref()
+        {
+            var context = this.DataContext as EditSnippetOptionsWindowModel;
+            this.DocumentControl.BaseHref = context.BaseHref;
+        }
+
+        private void SaveOptionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+
+            if( this.DocumentControl != null)
+            {
+                log.Info("Saving options");
+                saveBaseHref();
+                saveExternalHtmlSetting();
+            }
+        }
     }
 }

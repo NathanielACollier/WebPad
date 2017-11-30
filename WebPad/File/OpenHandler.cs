@@ -53,7 +53,8 @@ namespace WebPad.File
                     Javascript = snippetData.Javascript,
                     References = snippetData.References,
                     ExternalHtmlPath = snippetData.externalHtmlFile,
-                    SaveFilePath = webPadFilePath
+                    SaveFilePath = webPadFilePath,
+                    BaseHref = snippetData.baseHref
                 };
 
                 if( System.IO.File.Exists(webPadFilePath) && !string.IsNullOrWhiteSpace(snippetData.externalHtmlFile))

@@ -16,5 +16,11 @@ namespace WebPad.ChildWindows
         }
 
 
+        public string BaseHref
+        {
+            get { return this.GetValue(() => this.BaseHref); }
+            set { this.SetValue(() => this.BaseHref, value); }
+        }
+
     }
 }

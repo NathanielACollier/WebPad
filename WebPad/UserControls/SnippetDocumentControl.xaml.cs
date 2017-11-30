@@ -79,6 +79,8 @@ namespace WebPad.UserControls
 
         public string ExternalHtmlPath { get; set; }
 
+        public string BaseHref { get; set; } 
+
         public string Javascript
         {
             get { return txtJavascript.Text; }

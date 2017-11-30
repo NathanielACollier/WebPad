@@ -1,0 +1,21 @@
+﻿<Window x:Class="WebPad.ChildWindows.EditSnippetOptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ncControls="clr-namespace:NacWPFControls;assembly=NacWPFControls"
+        xmlns:local="clr-namespace:WebPad.ChildWindows"
+        mc:Ignorable="d"
+        Title="EditSnippetOptionsWindow" Height="300" Width="300">
+    <Window.DataContext>
+        <local:EditSnippetOptionsWindowModel />
+    </Window.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path"></TextBlock>
+            <ncControls:FilePicker Margin="10,0,0,0" DockPanel.Dock="Left" FilePath="{Binding Path=ExternalHtmlTemplatePath, Mode=TwoWay}" FilePathChanged="ExternalHtmlTemplatePathFilePicker_FilePathChanged"></ncControls:FilePicker>
+        </DockPanel>
+
+        <DockPanel></DockPanel>
+    </DockPanel>
+</Window>

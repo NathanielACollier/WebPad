@@ -44,6 +44,7 @@
                 <MenuItem Command="ApplicationCommands.Paste" />
                 <Separator />
                 <MenuItem x:Name="MenuReferences" Header="_References" InputGestureText="F4" />
+                <MenuItem x:Name="MenuEditFileOptions" Header="_Options" />
             </MenuItem>
             <MenuItem Header="_Build">
                 <MenuItem x:Name="MenuExecute"  Header="_Execute" InputGestureText="F5"/>

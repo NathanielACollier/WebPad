@@ -48,6 +48,21 @@ namespace WebPad.File
             var doc = SaveToXDocument(snippetControl);
             log.Info($"Saving to {filePath}");
             doc.Save(filePath);
+
+            if(!string.IsNullOrWhiteSpace(snippetControl.ExternalHtmlPath))
+            {
+                var fullExtHtmlPath = Utilities.PathUtilities.MakeAbsolutePath(filePath, snippetControl.ExternalHtmlPath);
+                log.Info($"Saving html to external document: [relative={snippetControl.ExternalHtmlPath},full={fullExtHtmlPath}]");
+
+                if(System.IO.File.Exists(fullExtHtmlPath))
+                {
+                    // save all the html to it
+                    System.IO.File.WriteAllText(fullExtHtmlPath, snippetControl.Html);
+                }else
+                {
+                    log.Error($"External html file: [{fullExtHtmlPath}] does not exist");
+                }
+            }
         }
 
         public static System.Xml.Linq.XDocument SaveToXDocument( SnippetDocumentControl snippetControl)

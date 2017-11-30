@@ -175,10 +175,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChildWindows\EditSnippetOptionsWindow.xaml.cs">
+      <DependentUpon>EditSnippetOptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChildWindows\EditSnippetOptionsWindowModel.cs" />
+    <Compile Include="Utilities\PathUtilities.cs" />
     <Compile Include="Utilities\XmlSerialization.cs" />
     <Compile Include="WebServer\WebPadServerManager.cs" />
     <Compile Include="WebServer\WebServer.cs" />
     <Compile Include="WebServer\TCPUtillity.cs" />
+    <Page Include="ChildWindows\EditSnippetOptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

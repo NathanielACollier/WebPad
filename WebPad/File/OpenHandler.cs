@@ -52,8 +52,22 @@ namespace WebPad.File
                     Html = snippetData.Html,
                     Javascript = snippetData.Javascript,
                     References = snippetData.References,
+                    ExternalHtmlPath = snippetData.externalHtmlFile,
                     SaveFilePath = webPadFilePath
                 };
+
+                if( System.IO.File.Exists(webPadFilePath) && !string.IsNullOrWhiteSpace(snippetData.externalHtmlFile))
+                {
+                    var fullPath = Utilities.PathUtilities.MakeAbsolutePath(webPadFilePath, snippetData.externalHtmlFile);
+
+                    if(System.IO.File.Exists(fullPath))
+                    {
+                        snippet.Html = System.IO.File.ReadAllText(fullPath);
+                    }else
+                    {
+                        log.Error($"External html file {fullPath} does not exist");
+                    }
+                }
             }
             else
             {

@@ -1,0 +1,138 @@
+﻿<Window x:Class="WebPad.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:ncLogView="clr-namespace:NacWPFControls.LogViewer;assembly=NacWPFControls"
+        xmlns:localControls="clr-namespace:WebPad.UserControls"
+        xmlns:folderBrowser="clr-namespace:CodeRunner.FolderBrowser;assembly=CodeRunner.FolderBrowser"
+     xmlns:Properties="clr-namespace:WebPad.Properties" 
+        Title="Web Pad" 
+        Height="399" 
+        Width="654">
+
+
+    <Grid x:Name="grdForm" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22" />
+            <!-- Menu -->
+            <RowDefinition x:Name="EditorsDefinition" Height="{Binding RowDefinitionEditorsHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" />
+            <!-- Editors -->
+            <RowDefinition x:Name="ResultSplitterDefinition" Height="5" />
+            <!-- Splitter -->
+            <RowDefinition x:Name="ResultDefinition" MinHeight="0" Height="{Binding RowDefinitionResultsHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" />
+            <!-- Results -->
+            <RowDefinition Height="22" />
+            <!-- Status Bar -->
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Height="22" x:Name="menu1" VerticalAlignment="Top">
+            <MenuItem Header="_File">
+                <MenuItem Command="ApplicationCommands.New" />
+                <MenuItem Command="ApplicationCommands.Open" />
+
+                <MenuItem Command="ApplicationCommands.Save" />
+                <MenuItem x:Name="MenuSaveAsWebPad" Header="Save As"></MenuItem>
+                <Separator />
+                <MenuItem x:Name="MenuOpenFromHTML" Header="Open From HTML"></MenuItem>
+                <MenuItem x:Name="MenuSaveToHTML" Header="Save To HTML"></MenuItem>
+                <MenuItem x:Name="MenuSaveAsHTML" Header="Save As HTML"></MenuItem>
+                <Separator />
+                <MenuItem x:Name="MenuExit" Header="E_xit" InputGestureText="Alt-F4" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Command="ApplicationCommands.Copy"/>
+                <MenuItem Command="ApplicationCommands.Cut" />
+                <MenuItem Command="ApplicationCommands.Paste" />
+                <Separator />
+                <MenuItem x:Name="MenuReferences" Header="_References" InputGestureText="F4" />
+            </MenuItem>
+            <MenuItem Header="_Build">
+                <MenuItem x:Name="MenuExecute"  Header="_Execute" InputGestureText="F5"/>
+            </MenuItem>
+            <MenuItem Header="_Window">
+                <MenuItem x:Name="MenuNextPane" Header="N_ext Pane" InputGestureText="F6"></MenuItem>
+                <MenuItem x:Name="MenuPreviousPane" Header="P_revious Pane" InputGestureText="Shift+F6"></MenuItem>
+                <MenuItem x:Name="MenuHideEditorPane" Header="Hide E_ditor Pane" InputGestureText="Ctrl+E"></MenuItem>
+                <MenuItem x:Name="MenuHideResultsPane" Header="H_ide Results Pane" InputGestureText="Ctrl+R"></MenuItem>
+
+            </MenuItem>
+            <MenuItem Header="_Browser">
+                <MenuItem x:Name="MenuBrowserIE" Header="Internet Explorer"></MenuItem>
+                <MenuItem x:Name="MenuBrowserFirefox" Header="Mozilla Firefox"></MenuItem>
+                <MenuItem x:Name="MenuBrowserChrome" Header="Google Chrome"></MenuItem>
+                <MenuItem x:Name="MenuBrowserEdge" Header="Edge"></MenuItem>
+            </MenuItem>
+        </Menu>
+
+
+        <DockPanel Grid.Row="1">
+            <Expander DockPanel.Dock="Left" ExpandDirection="Left" Header="">
+                <Expander.Content>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="5" />
+                        </Grid.ColumnDefinitions>
+                        <folderBrowser:LocalFolderBrowser FileExtensions="web,html" 
+                                              Grid.Column="0" 
+                                              Name="folderBrowser"
+                                              FileDoubleClicked="folderBrowser_FileDoubleClicked"
+                                ></folderBrowser:LocalFolderBrowser>
+
+                        <GridSplitter Grid.Column="1" Width="5" ResizeBehavior="PreviousAndCurrent" ResizeDirection="Columns"/>
+                    </Grid>
+                </Expander.Content>
+            </Expander>
+
+            <TabControl DockPanel.Dock="Left" x:Name="DocumentTab">
+            </TabControl>
+        </DockPanel>
+
+        <GridSplitter Grid.Row="2" x:Name="gspResults" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Width="Auto" Height="5" />
+
+        <TabControl Grid.Row="3" Margin="0,0,0,0">
+            <TabItem Header="Internet Explorer">
+                <Grid x:Name="grdInternetExplorerResults"></Grid>
+            </TabItem>
+
+        </TabControl>
+
+        <StatusBar x:Name="stsStatusBar" Grid.Row="4">
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatusMessage"></TextBlock>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+        
+
+
+    <Window.Resources>
+
+        <DataTemplate x:Key="logTabHeader">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Log" />
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="logTabContent">
+            <ncLogView:Log4NetViewerControl />
+        </DataTemplate>
+
+        <DataTemplate x:Key="docTabHeader">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Clone" x:Name="MenuCloneScript" Click="MenuCloneScript_Click" />
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
+                <TextBlock Name="queryNameTextBlock" />
+                <Button Name="CloseTabButton" Click="CloseTabButton_Click" Content="X" Background="Red" Foreground="White" />
+            </StackPanel>
+        </DataTemplate>
+
+
+        <DataTemplate x:Key="docTabContent">
+            <localControls:SnippetDocumentControl />
+        </DataTemplate>
+        
+    </Window.Resources>
+</Window>

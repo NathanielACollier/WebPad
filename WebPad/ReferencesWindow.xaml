@@ -1,0 +1,19 @@
+﻿<Window x:Class="WebPad.ReferencesWindow"
+        Title="References" Height="300" Width="300"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:Rendering="clr-namespace:WebPad.Rendering" 
+        >
+    <Window.Resources>
+        <CollectionViewSource x:Key="referencesView" />
+    </Window.Resources>
+    <DockPanel>
+        <DataGrid x:Name="referencesGrid" DockPanel.Dock="Top" CanUserAddRows="True" CanUserDeleteRows="True">
+         <DataGrid.ItemTemplate>
+            <DataTemplate DataType="{x:Type Rendering:Reference}">
+               <TextBox Text="{Binding Path=Url, Mode=TwoWay}"></TextBox>
+            </DataTemplate>
+         </DataGrid.ItemTemplate>
+      </DataGrid>
+    </DockPanel>
+</Window>

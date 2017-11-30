@@ -1,0 +1,45 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WebPad.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="WindowTop" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="WindowHeight" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">400</Value>
+    </Setting>
+    <Setting Name="WindowLeft" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="WindowState" Type="System.Windows.WindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="WindowWidth" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">500</Value>
+    </Setting>
+    <Setting Name="InstantHelpZoom" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">100</Value>
+    </Setting>
+    <Setting Name="InstantHelpViewingMode" Type="System.Windows.Controls.FlowDocumentReaderViewingMode" Scope="User">
+      <Value Profile="(Default)">TwoPage</Value>
+    </Setting>
+    <Setting Name="RowDefinitionEditorsHeight" Type="System.Windows.GridLength" Scope="User">
+      <Value Profile="(Default)">*</Value>
+    </Setting>
+    <Setting Name="RowDefinitionResultsHeight" Type="System.Windows.GridLength" Scope="User">
+      <Value Profile="(Default)">*</Value>
+    </Setting>
+    <Setting Name="RowDefinitionHelpHeight" Type="System.Windows.GridLength" Scope="User">
+      <Value Profile="(Default)">*</Value>
+    </Setting>
+    <Setting Name="InternetExplorerEXEPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Internet Explorer\iexplore.exe</Value>
+    </Setting>
+    <Setting Name="FireFoxEXEPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Mozilla Firefox\firefox.exe</Value>
+    </Setting>
+    <Setting Name="ChromeEXEPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad", "WebPad\WebPad.csproj", "{926485D8-46B8-4133-B93D-8F49BC6FD541}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Tests", "WebPad.Tests\WebPad.Tests.csproj", "{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://ntapps:8080/tfs/records_system
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = WebPad\\WebPad.csproj
+		SccProjectName1 = WebPad
+		SccLocalPath1 = WebPad
+		SccProjectUniqueName2 = WebPad.Tests\\WebPad.Tests.csproj
+		SccProjectName2 = WebPad.Tests
+		SccLocalPath2 = WebPad.Tests
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{926485D8-46B8-4133-B93D-8F49BC6FD541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{926485D8-46B8-4133-B93D-8F49BC6FD541}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{926485D8-46B8-4133-B93D-8F49BC6FD541}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{926485D8-46B8-4133-B93D-8F49BC6FD541}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

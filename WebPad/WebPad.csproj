@@ -278,6 +278,12 @@
   <ItemGroup>
     <Folder Include="Resources\Styles\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebPad.Dependencies.General\WebPad.Dependencies.General.csproj">
+      <Project>{4abb6100-6b14-4eba-a338-2f158fe9ac06}</Project>
+      <Name>WebPad.Dependencies.General</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

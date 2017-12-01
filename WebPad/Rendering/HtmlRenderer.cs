@@ -35,7 +35,22 @@ namespace WebPad.Rendering
                         Utilities.WebBrowserUtil.HideScriptErrors(_myBrowser, true);
                         navigateFiredOnce = true;
                     }
+                    
                 };
+
+
+                _myBrowser.LoadCompleted += (sender, args) =>
+                {
+                    // to be able to get clicks in the document
+                    //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
+                    //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
+                    var docWithEvents = _myBrowser.Document as MSHTML.HTMLDocumentEvents2_Event;
+
+                    docWithEvents.onclick += new MSHTML.HTMLDocumentEvents2_onclickEventHandler(this.myWebBrowser_DocumentClickEvent);
+                };
+
+
+
 
                 controlPanel.Children.Add(_myBrowser);
             }
@@ -47,6 +62,22 @@ namespace WebPad.Rendering
         }
 
 
+
+        protected bool myWebBrowser_DocumentClickEvent(MSHTML.IHTMLEventObj args)
+        {
+            if( args.srcElement != null)
+            {
+                var lineNumber = args.srcElement.getAttribute("linenumber", 0) as string;
+                var column = args.srcElement.getAttribute("column", 0) as string;
+
+                if( lineNumber != null)
+                {
+                    log.Info($"Element clicked with AvalonEdit html source line number {lineNumber}");
+                }
+            }
+
+            return false;
+        }
 
 
         public void ScrollBrowserTo(int lineNumber, int column)

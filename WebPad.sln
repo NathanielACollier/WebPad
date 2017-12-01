@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Tests", "WebPad.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Dependencies.General", "WebPad.Dependencies.General\WebPad.Dependencies.General.csproj", "{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Dependencies.General.Tests", "WebPad.Dependencies.General.Tests\WebPad.Dependencies.General.Tests.csproj", "{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

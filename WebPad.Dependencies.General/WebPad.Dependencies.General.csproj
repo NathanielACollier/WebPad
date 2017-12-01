@@ -108,6 +108,9 @@
       <DependentUpon>BusyIndicatorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFUserControls\WpfBusyIndicator\BusyMode.cs" />
+    <Compile Include="WPFUtilities\Run\Run.cs" />
+    <Compile Include="WPFUtilities\Run\RunOnUIArgs.cs" />
+    <Compile Include="WPFUtilities\Run\RunResult.cs" />
     <Compile Include="WPFUtilities\WindowHelpers.cs" />
     <Compile Include="WPFViewModelBase\Command.cs" />
     <Compile Include="WPFViewModelBase\ViewModelBase.cs" />

@@ -1,23 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2008
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad", "WebPad\WebPad.csproj", "{926485D8-46B8-4133-B93D-8F49BC6FD541}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Tests", "WebPad.Tests\WebPad.Tests.csproj", "{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Dependencies.General", "WebPad.Dependencies.General\WebPad.Dependencies.General.csproj", "{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPad.Dependencies.General.Tests", "WebPad.Dependencies.General.Tests\WebPad.Dependencies.General.Tests.csproj", "{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://ntapps:8080/tfs/records_system
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = WebPad\\WebPad.csproj
-		SccProjectName1 = WebPad
-		SccLocalPath1 = WebPad
-		SccProjectUniqueName2 = WebPad.Tests\\WebPad.Tests.csproj
-		SccProjectName2 = WebPad.Tests
-		SccLocalPath2 = WebPad.Tests
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -31,8 +25,19 @@ Global
 		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C17E3B37-1ECE-4566-8AA2-9118E9DF697B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ABB6100-6B14-4EBA-A338-2F158FE9AC06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8E4CDF5-4E85-4574-9C1A-C11808B225E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B36B9961-CA85-4045-B367-371D879B230F}
 	EndGlobalSection
 EndGlobal

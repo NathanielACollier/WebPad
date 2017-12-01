@@ -16,7 +16,13 @@ using MessageBox = System.Windows.MessageBox;
 using MessageBoxOptions = System.Windows.MessageBoxOptions;
 using System.Diagnostics;
 
-using NCWPFExtensions;
+
+using Log4NetHelpers= WebPad.Dependencies.General.Log4NetHelpers;
+using LogViewer = WebPad.Dependencies.General.WPFUserControls.LogViewer;
+using LocalFolderBrowser = WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;
+
+using WebPad.Dependencies.General.Extensions.WPF;
+
 
 namespace WebPad
 {
@@ -191,7 +197,7 @@ namespace WebPad
             DocumentTab.Items.Insert(0, tabItem);
 
             var headerCtrl = headerTemplate.LoadContent() as StackPanel;
-            var bodyCtrl = contentTemplate.LoadContent() as NacWPFControls.LogViewer.Log4NetViewerControl;
+            var bodyCtrl = contentTemplate.LoadContent() as LogViewer.Log4NetViewerControl;
 
             tabItem.Header = headerCtrl;
             tabItem.Content = bodyCtrl;
@@ -735,7 +741,7 @@ namespace WebPad
             }
         }// end of clone script menuitem
 
-        private void folderBrowser_FileDoubleClicked(object sender, CodeRunner.FolderBrowser.FileSelectedEventArgs e)
+        private void folderBrowser_FileDoubleClicked(object sender, LocalFolderBrowser.FileSelectedEventArgs e)
         {
             try
             {

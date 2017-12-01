@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using WebPad.Dependencies.General.WPFViewModelBase;
+
 namespace WebPad.ChildWindows
 {
-    public class EditSnippetOptionsWindowModel : WPFViewModelBase.ViewModelBase
+    public class EditSnippetOptionsWindowModel : ViewModelBase
     {
 
         public string ExternalHtmlTemplatePath

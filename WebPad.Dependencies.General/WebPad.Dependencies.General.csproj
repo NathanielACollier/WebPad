@@ -48,6 +48,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\WPF\DependencyObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -61,10 +62,23 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Utilities\FileSystemShortcutHandler.cs" />
     <Compile Include="Utilities\WPFWindowsFormsIntegrationUtil.cs" />
     <Compile Include="WPFUserControls\FilePicker.xaml.cs">
       <DependentUpon>FilePicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPFUserControls\LocalFolderBrowser\FolderModel.cs" />
+    <Compile Include="WPFUserControls\LocalFolderBrowser\FolderSelectedEventArgs.cs" />
+    <Compile Include="WPFUserControls\LocalFolderBrowser\LocalFolderBrowser.xaml.cs">
+      <DependentUpon>LocalFolderBrowser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPFUserControls\LocalFolderBrowser\MainModel.cs" />
+    <Compile Include="WPFUserControls\WpfBusyIndicator\BusyIndicatorControl.xaml.cs">
+      <DependentUpon>BusyIndicatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPFUserControls\WpfBusyIndicator\BusyMode.cs" />
+    <Compile Include="WPFViewModelBase\Command.cs" />
+    <Compile Include="WPFViewModelBase\ViewModelBase.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -79,6 +93,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WPFUserControls\LocalFolderBrowser\LocalFolderBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFUserControls\Resources\Styles\TreeViewItemFillWidth.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFUserControls\WpfBusyIndicator\BusyIndicatorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="WPFUserControls\Resources\Images\folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

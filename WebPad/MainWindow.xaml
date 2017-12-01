@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
         xmlns:ncLogView="clr-namespace:NacWPFControls.LogViewer;assembly=NacWPFControls"
         xmlns:localControls="clr-namespace:WebPad.UserControls"
-        xmlns:folderBrowser="clr-namespace:CodeRunner.FolderBrowser;assembly=CodeRunner.FolderBrowser"
+        xmlns:folderBrowser="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;assembly=WebPad.Dependencies.General"
      xmlns:Properties="clr-namespace:WebPad.Properties" 
         Title="Web Pad" 
         Height="399" 

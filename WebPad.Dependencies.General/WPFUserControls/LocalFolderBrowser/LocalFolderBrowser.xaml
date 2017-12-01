@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser"
              xmlns:BusyIndicator="clr-namespace:WebPad.Dependencies.General.WPFUserControls.WpfBusyIndicator"
              mc:Ignorable="d" 
+             x:Name="localFolderBrowserCtrl"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ResourceDictionary Source="/WebPad.Dependencies.General;component/WPFUserControls/Resources/Styles/TreeViewItemFillWidth.xaml" />

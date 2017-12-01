@@ -23,6 +23,20 @@ namespace WebPad.Rendering
             try
             {
                 _myBrowser = new WebBrowser();
+
+                bool navigateFiredOnce = false;
+
+                _myBrowser.Navigated += (sender, args) =>
+                {
+                    // suppress script errors
+                    if( navigateFiredOnce == false)
+                    {
+                        log.Info("Suppressing Browser Script Errors");
+                        Utilities.WebBrowserUtil.HideScriptErrors(_myBrowser, true);
+                        navigateFiredOnce = true;
+                    }
+                };
+
                 controlPanel.Children.Add(_myBrowser);
             }
             catch (Exception ex)

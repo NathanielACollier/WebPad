@@ -79,22 +79,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CodeRunner.FolderBrowser, Version=1.0.6240.15791, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CodeRunner.FolderBrowser.1.0.6240.15791\lib\net45\CodeRunner.FolderBrowser.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EPPlus, Version=4.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlus.4.0.2\lib\net20\EPPlus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EPPlusLibUtilities, Version=1.0.6046.16140, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlusLibUtilities.1.0.6046.16140\lib\net35\EPPlusLibUtilities.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FileSystemShortcutHandlerLib, Version=1.0.5492.21805, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FileSystemShortcutHandlerLib.1.0.5492.21805\lib\net20\FileSystemShortcutHandlerLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net40\HtmlAgilityPack.dll</HintPath>
     </Reference>
@@ -103,30 +87,6 @@
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Log4NetHelpers, Version=1.0.5807.17270, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Log4NetHelpers.1.0.5807.17270\lib\net35\Log4NetHelpers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Log4NetNotifyAppender, Version=1.0.5807.17199, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Log4NetNotifyAppender.1.0.5807.17199\lib\net35\Log4NetNotifyAppender.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NacWPFControls, Version=1.0.6047.21946, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NacWPFControls.1.0.6047.21946\lib\net40\NacWPFControls.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NacWPFUtilities, Version=1.0.5673.21998, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NacWPFUtilities.1.0.5673.21998\lib\net40\NacWPFUtilities.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NCTokenizer, Version=1.0.5492.21954, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NCTokenizer.1.0.5492.21954\lib\net35\NCTokenizer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NCWPFExtensions, Version=1.0.6246.22067, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NCWPFExtensions.1.0.6246.22067\lib\net35\NCWPFExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -154,18 +114,6 @@
     </Reference>
     <Reference Include="WindowsFormsIntegration">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WpfBusyIndicator, Version=1.0.5491.13687, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WpfBusyIndicator.1.0.5491.13687\lib\net35\WpfBusyIndicator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WPFViewModelBase, Version=1.0.5491.13225, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WPFViewModelBase.1.0.5491.13225\lib\net35\WPFViewModelBase.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ZetaLongPaths, Version=1.0.0.9, Culture=neutral, PublicKeyToken=b764f59068f31f38, processorArchitecture=MSIL">
-      <HintPath>..\packages\ZetaLongPaths.1.0.0.9\lib\net40-full\ZetaLongPaths.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

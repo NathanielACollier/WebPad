@@ -31,9 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EPPlus, Version=4.0.2.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.0.2\lib\net20\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Presentation" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -46,9 +53,20 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ZetaLongPaths, Version=1.0.0.21, Culture=neutral, PublicKeyToken=b764f59068f31f38, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZetaLongPaths.1.0.0.21\lib\net40-full\ZetaLongPaths.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EPPlusUtilities\ExcelDataTableUtility.cs" />
+    <Compile Include="EPPlusUtilities\ExcelReadUtility.cs" />
+    <Compile Include="EPPlusUtilities\ExcelUtility.cs" />
+    <Compile Include="EPPlusUtilities\Model\ColumnNameType.cs" />
     <Compile Include="Extensions\WPF\DependencyObjectExtensions.cs" />
+    <Compile Include="Log4NetHelpers\CodeConfiguredUtilities.cs" />
+    <Compile Include="Log4NetHelpers\GeneralUtilities.cs" />
+    <Compile Include="Log4NetHelpers\NewLogEntryEventArgs.cs" />
+    <Compile Include="Log4NetHelpers\NotifyAppender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -73,16 +91,28 @@
       <DependentUpon>LocalFolderBrowser.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFUserControls\LocalFolderBrowser\MainModel.cs" />
+    <Compile Include="WPFUserControls\LogViewer\CollapsibleLogEntry.cs" />
+    <Compile Include="WPFUserControls\LogViewer\Helpders.cs" />
+    <Compile Include="WPFUserControls\LogViewer\Log4NetLogEntry.cs" />
+    <Compile Include="WPFUserControls\LogViewer\Log4NetViewerControl.xaml.cs">
+      <DependentUpon>Log4NetViewerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPFUserControls\LogViewer\LogEntry.cs" />
+    <Compile Include="WPFUserControls\LogViewer\LogViewerControl.xaml.cs">
+      <DependentUpon>LogViewerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPFUserControls\WpfBusyIndicator\BusyIndicatorControl.xaml.cs">
       <DependentUpon>BusyIndicatorControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFUserControls\WpfBusyIndicator\BusyMode.cs" />
+    <Compile Include="WPFUtilities\WindowHelpers.cs" />
     <Compile Include="WPFViewModelBase\Command.cs" />
     <Compile Include="WPFViewModelBase\ViewModelBase.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,6 +124,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPFUserControls\LocalFolderBrowser\LocalFolderBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFUserControls\LogViewer\Log4NetViewerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFUserControls\LogViewer\LogViewerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

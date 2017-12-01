@@ -46,23 +46,29 @@ namespace WebPad.Rendering
                     var lineAnchors = doc.getElementsByClassName(Rendering.HtmlInjectLineNumberAnchors.cssClassMarker)
                                                 .OfType<MSHTML.HTMLGenericElement>();
 
-                    // first element greater than or equal to line number (Scroll to it)
-                    var greaterThanEqualToLineNumber = from e in lineAnchors
-                                                       let num = Convert.ToInt32(e.getAttribute("linenumber") as string)
-                                                       where num >= lineNumber
-                                                       select e;
+                    if(lineAnchors.Any())
+                    {
+                        // first element greater than or equal to line number (Scroll to it)
+                        var greaterThanEqualToLineNumber = from e in lineAnchors
+                                                           let num = Convert.ToInt32(e.getAttribute("linenumber") as string)
+                                                           where num >= lineNumber
+                                                           select e;
 
-                    if( greaterThanEqualToLineNumber.Any())
-                    {
-                        var target = greaterThanEqualToLineNumber.First();
-                        log.Info($"Scrolling to element with source line {target.getAttribute("linenumber", 0)}, column {target.getAttribute("column")}");
-                        target.scrollIntoView();
-                    }else
-                    {
-                        log.Info($"No element found at line {lineNumber}, so scrolling to end");
-                        lineAnchors.Last().scrollIntoView();
-                    }
-                 }
+                        if (greaterThanEqualToLineNumber.Any())
+                        {
+                            var target = greaterThanEqualToLineNumber.First();
+                            log.Info($"Scrolling to element with source line {target.getAttribute("linenumber", 0)}, column {target.getAttribute("column")}");
+                            target.scrollIntoView();
+                        }
+                        else
+                        {
+                            log.Info($"No element found at line {lineNumber}, so scrolling to end");
+                            lineAnchors.Last().scrollIntoView();
+                        }
+                    }// end of if any line anchors
+
+                    
+                 }// end of if doc != null
                 
             }
         }

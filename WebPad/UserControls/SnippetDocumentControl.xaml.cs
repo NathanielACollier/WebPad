@@ -19,6 +19,8 @@ namespace WebPad.UserControls
 
         public event Action<object, HtmlEditorCaretPositionChangeEventArgs> HtmlEditorCaretPositionChangeDelayedEvent;
 
+        public event Action<object, EventArgs> HtmlEditorTextChangeDelayedEvent;
+
         private readonly CodeCompletionBase _htmlCompletion;
         private readonly CodeCompletionBase _javascriptCompletion;
         private readonly CodeCompletionBase _css3SelectorCompletion;
@@ -32,6 +34,10 @@ namespace WebPad.UserControls
             Interval = TimeSpan.FromMilliseconds(400)
         };
 
+        DispatcherTimer htmlTextEditorTextChangeDelayTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(400)
+        };
 
         // this is where references are stored an executed at
 
@@ -59,7 +65,30 @@ namespace WebPad.UserControls
             txtCSS.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CSS");
 
             htmlTextEditorCaretPositionChangeDelayTimer.Tick += HtmlTextEditorCaretPositionChangeDelayTimer_Tick;
-            txtHtml.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+            txtHtml.TextArea.Caret.PositionChanged += HTMLTextEditorCaret_PositionChanged;
+
+
+            txtHtml.TextChanged += HTMLTextEditor_TextChanged;
+            htmlTextEditorTextChangeDelayTimer.Tick += HtmlTextEditorTextChangeDelayTimer_Tick;
+        }
+
+        private void HtmlTextEditorTextChangeDelayTimer_Tick(object sender, EventArgs e)
+        {
+            // stop the timer
+            htmlTextEditorTextChangeDelayTimer.Stop();
+            // do action based on the text changing
+
+            if( this.HtmlEditorTextChangeDelayedEvent != null)
+            {
+                this.HtmlEditorTextChangeDelayedEvent(this, new EventArgs());
+            }
+        }
+
+        private void HTMLTextEditor_TextChanged(object sender, EventArgs e)
+        {
+            // delay trigger event
+            htmlTextEditorTextChangeDelayTimer.Stop();
+            htmlTextEditorTextChangeDelayTimer.Start();
         }
 
         private void HtmlTextEditorCaretPositionChangeDelayTimer_Tick(object sender, EventArgs e)
@@ -84,7 +113,7 @@ namespace WebPad.UserControls
             }
         }
 
-        private void Caret_PositionChanged(object sender, EventArgs e)
+        private void HTMLTextEditorCaret_PositionChanged(object sender, EventArgs e)
         {
             htmlTextEditorCaretPositionChangeDelayTimer.Stop();
             htmlTextEditorCaretPositionChangeDelayTimer.Start();

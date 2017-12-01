@@ -239,8 +239,31 @@ namespace WebPad
 
 
             bodyCtrl.HtmlEditorCaretPositionChangeDelayedEvent += CurrentSnippetDocument_HtmlEditorCaretPositionChangeDelayedEvent;
+            bodyCtrl.HtmlEditorTextChangeDelayedEvent += CurrentSnippetDocument_HtmlEditorTextChangeDelayedEvent;
 
             return bodyCtrl;
+        }
+
+        private void CurrentSnippetDocument_HtmlEditorTextChangeDelayedEvent(object sender, EventArgs args)
+        {
+            var docCtrl = sender as UserControls.SnippetDocumentControl;
+
+            if( docCtrl != null)
+            {
+                var selectedDoc = this.GetSelectedTabSnippetDocumentControl();
+
+                if( selectedDoc != null)
+                {
+                    // are we on the doc that fired the event???
+                    if( docCtrl != selectedDoc)
+                    {
+                        docCtrl.HtmlEditorTextChangeDelayedEvent -= CurrentSnippetDocument_HtmlEditorTextChangeDelayedEvent;
+                    }
+
+                    // render what we have
+                    _resultsRenderer.Render(selectedDoc);
+                }
+            }
         }
 
         private void CurrentSnippetDocument_HtmlEditorCaretPositionChangeDelayedEvent(object sender, HtmlEditorCaretPositionChangeEventArgs args)

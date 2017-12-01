@@ -6,21 +6,8 @@ using System.Text;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 {
-    public class FolderModel : WPFViewModelBase.ViewModelBase
+    public class FolderModel : FileSystemNodeModel
     {
-
-        public string Name
-        {
-            get { return this.GetValue(() => this.Name); }
-            set { this.SetValue(() => this.Name, value); }
-        }
-
-
-        public string Path
-        {
-            get { return this.GetValue(() => this.Path); }
-            set { this.SetValue(() => this.Path, value); }
-        }
 
 
         public bool Busy
@@ -30,9 +17,9 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
         }
 
 
-        public ObservableCollection<FolderModel> SubFolders
+        public ObservableCollection<FileSystemNodeModel> Children
         {
-            get { return this.GetValue(() => this.SubFolders); }
+            get { return this.GetValue(() => this.Children); }
         }
 
     }

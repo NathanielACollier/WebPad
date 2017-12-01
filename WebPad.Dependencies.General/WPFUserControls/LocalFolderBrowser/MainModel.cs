@@ -17,10 +17,11 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 
 
 
-        public ObservableCollection<FolderModel> RootFolders
+        public ObservableCollection<FileSystemNodeModel> RootFolders
         {
             get { return base.GetValue(() => this.RootFolders); }
         }
+
 
 
 

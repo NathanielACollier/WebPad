@@ -22,6 +22,9 @@ using System.Collections.ObjectModel;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 {
+
+
+
     /// <summary>
     /// Interaction logic for LocalFolderBrowser.xaml
     /// </summary>
@@ -29,6 +32,12 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
     {
         public delegate void FolderSelectedHandler(object sender, FolderSelectedEventArgs e);
         public event FolderSelectedHandler FolderSelected;
+
+        public delegate void FileDoubleClickedHandler(object sender, FileSelectedEventArgs e);
+        public event FileDoubleClickedHandler FileDoubleClicked;
+
+        public delegate void FileSelectedHandler(object sender, FileSelectedEventArgs e);
+        public event FileSelectedHandler FileSelected;
 
 
         #region SelectedFolder DP
@@ -44,7 +53,47 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 
         #endregion
 
+        #region FileExtensions DP
 
+        public static readonly DependencyProperty FileExtensionsProperty = DependencyProperty.Register("FileExtensions", typeof(string), typeof(LocalFolderBrowser));
+
+        public string FileExtensions
+        {
+            get { return (string)GetValue(FileExtensionsProperty); }
+            set { SetValue(FileExtensionsProperty, value); }
+        }
+
+        public IEnumerable<string> FileExtensionsList
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(this.FileExtensions))
+                {
+                    return this.FileExtensions
+                            .Split(',', ';', ' ', '\t', '\n')
+                            .Where(str => !string.IsNullOrWhiteSpace(str))
+                            .Select(str =>
+                            {
+                                // get rid of leading '.'
+                                if (str[0] == '.')
+                                {
+                                    return str.Substring(1);
+                                }
+                                else
+                                {
+                                    return str;
+                                }
+                            });
+                }
+                else
+                {
+                    return new string[] { };
+                }
+
+            }
+        }
+
+        #endregion
 
 
         #region Model DP
@@ -80,7 +129,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
         /// <param name="subFolders"></param>
         /// <param name="name"></param>
         /// <param name="path"></param>
-        private void AddFolderThreadSafe(ObservableCollection<FolderModel> subFolders, string name, string path)
+        private void AddFolderThreadSafe(ObservableCollection<FileSystemNodeModel> subFolders, string name, string path)
         {
             var folder = new FolderModel
             {
@@ -88,11 +137,25 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
                 Path = path
             };
             // add an empty child, so we can expand it
-            folder.SubFolders.Add(new FolderModel());
+            folder.Children.Add(new FolderModel());
 
             this.Dispatcher.Invoke(() =>
             {
                 subFolders.Add(folder);
+            });
+        }
+
+        private void AddFileThreadSafe(ObservableCollection<FileSystemNodeModel> items, string name, string path)
+        {
+            var file = new FileModel
+            {
+                Name = name,
+                Path = path
+            };
+
+            this.Dispatcher.Invoke(() =>
+            {
+                items.Add(file);
             });
         }
 
@@ -150,7 +213,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
             // first clear what's there
             this.Dispatcher.Invoke(() =>
             {
-                parentFolder.SubFolders.Clear();
+                parentFolder.Children.Clear();
             });
 
 
@@ -173,7 +236,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
                         // fileAttrs is a bitmask, so we have to use the & bitwise operater to determine if it's a directory or not
                         if ((fileAttrs & System.IO.FileAttributes.Directory) == System.IO.FileAttributes.Directory)
                         {
-                            AddFolderThreadSafe(parentFolder.SubFolders, shortcutName, resolvedPath);
+                            AddFolderThreadSafe(parentFolder.Children, shortcutName, resolvedPath);
                         }
                     }
                     catch (Exception ex)
@@ -187,12 +250,34 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
                 {
                     var dirInfo = new System.IO.DirectoryInfo(directoryPath);
 
-                    AddFolderThreadSafe(parentFolder.SubFolders, dirInfo.Name, directoryPath);
+                    AddFolderThreadSafe(parentFolder.Children, dirInfo.Name, directoryPath);
                 }
-            }
+
+                List<string> extensions = new List<string>();
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    // we can't access the DP inside this thread, so copy it
+                    extensions.AddRange(this.FileExtensionsList);
+                });
+
+                // enumerate files
+                foreach (string filePath in System.IO.Directory.EnumerateFiles(parentFolder.Path, "*.*", System.IO.SearchOption.TopDirectoryOnly))
+                {
+                    var fileInfo = new System.IO.FileInfo(filePath);
+
+                    if (extensions.Any() == false ||
+                        extensions.Any(ext => string.Equals(fileInfo.Extension, '.' + ext, StringComparison.OrdinalIgnoreCase))
+                       )
+                    {
+                        AddFileThreadSafe(parentFolder.Children, fileInfo.Name, filePath);
+                    }
+
+                }// end of looping through files
+            }// end of if the folder exists
 
 
-        }
+        }// end PopulateChildrenThreadSafe function
 
 
         /// <summary>
@@ -216,12 +301,12 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
                 {
                     parentFolder.Busy = false;
 
-                    if (!parentFolder.SubFolders.Any())
+                    if (!parentFolder.Children.Any())
                     {
                         // add back a sub folder and de-expand
                         this.Dispatcher.Invoke(() =>
                         {
-                            parentFolder.SubFolders.Add(new FolderModel());
+                            parentFolder.Children.Add(new FolderModel());
                             parentFolderTreeItem.IsExpanded = false; // de-expand so that the user could try expanding it again (If they put something in the folder or whatever...)
                         });
                     }
@@ -283,11 +368,41 @@ namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 
         }
 
+        private void FileContentControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var ctrl = sender as ContentControl;
+            var file = ctrl.DataContext as FileModel;
 
+            if (this.FileSelected != null)
+            {
+                this.FileSelected(this, new FileSelectedEventArgs
+                {
+                    SelectedFile = file
+                });
+            }
+        }
 
+        private void FileContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var ctrl = sender as ContentControl;
+            var file = ctrl.DataContext as FileModel;
 
+            if (this.FileDoubleClicked != null)
+            {
+                this.FileDoubleClicked(this, new FileSelectedEventArgs
+                {
+                    SelectedFile = file
+                });
+            }
+        }
 
+        private void OpenSelectedFileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
 
-
+        }
     }
+
+
+
+
 }

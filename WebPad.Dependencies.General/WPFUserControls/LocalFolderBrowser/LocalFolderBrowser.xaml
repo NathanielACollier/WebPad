@@ -23,7 +23,7 @@
                   TreeViewItem.Expanded="TreeView_Expanded">
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type local:FolderModel}"
-                                          ItemsSource="{Binding Path=SubFolders}">
+                                          ItemsSource="{Binding Path=Children}">
 
                     <ContentControl Name="FolderContentControl" MouseDown="FolderContentControl_MouseDown" MouseDoubleClick="FolderContentControl_MouseDoubleClick">
                         <DockPanel>
@@ -40,6 +40,19 @@
 
 
                 </HierarchicalDataTemplate>
+                <DataTemplate DataType="{x:Type local:FileModel}">
+                    <ContentControl Name="FileContentControl" MouseDown="FileContentControl_MouseDown" MouseDoubleClick="FileContentControl_MouseDoubleClick">
+                        <DockPanel>
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Open File" Name="OpenSelectedFileMenuItem" Click="OpenSelectedFileMenuItem_Click" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+                            <Image Source="/WebPad.Dependencies.General;component/WPFUserControls/Resources/Images/file.png" Width="15" Height="15" />
+                            <TextBlock FontWeight="Bold" FontSize="12" Text="{Binding Path=Name}" />
+                        </DockPanel>
+                    </ContentControl>
+                </DataTemplate>
 
             </TreeView.Resources>
         </TreeView>

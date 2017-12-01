@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using ICSharpCode.AvalonEdit.Highlighting;
 using WebPad.CodeCompletion;
 using WebPad.Rendering;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace WebPad.UserControls
 {
@@ -47,6 +49,62 @@ namespace WebPad.UserControls
             txtJavascript.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("JavaScript");
             txtCSS.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CSS");
 
+
+            txtHtml.MouseDown += TxtHtml_MouseDown;
+
+
+            txtHtml.TextArea.MouseDown += TextArea_MouseDown;
+
+            txtHtml.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+        }
+
+        private void Caret_PositionChanged(object sender, EventArgs e)
+        {
+            var pos = txtHtml.CaretOffset;
+            var line = txtHtml.Document.GetLineByOffset(pos);
+            int posInLine = pos - line.Offset;
+            int lineNumber = line.LineNumber;
+
+            log.Info($"Caret position changed in text editor.  [Line={lineNumber}, CharAt={posInLine}]");
+        }
+
+        private void TextArea_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            log.Info("Mouse down in text area");
+        }
+
+        private async void TxtHtml_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            log.Info("Mouse down in text editor");
+            await GetElementRefFromHtmlEditorCurrentCaret();
+        }
+
+
+        private Task<int> GetElementRefFromHtmlEditorCurrentCaret()
+        {
+            var promise = new TaskCompletionSource<int>();
+
+            var currentCaret = this.txtHtml.CaretOffset;
+            var doc = this.txtHtml.Document;
+
+            var t = new Thread(() =>
+            {
+                try
+                {
+                    var ch = doc.GetCharAt(currentCaret);
+                    var line = doc.GetLineByOffset(currentCaret);
+                    
+
+                    promise.SetResult(0);
+                }catch(Exception ex)
+                {
+                    log.Error($"Error getting element ref.  Exception: {ex}");
+                    promise.SetResult(-1);
+                }
+            });
+            t.Start();
+
+            return promise.Task;
         }
 
 

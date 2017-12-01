@@ -15,12 +15,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <StartupObject>WebPad.App</StartupObject>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <ManifestCertificateThumbprint>5B326986FE8C49C6ED557B36CDE97D4E8790B913</ManifestCertificateThumbprint>
-    <ManifestKeyFile>jQueryBuddy_TemporaryKey.pfx</ManifestKeyFile>
-    <GenerateManifests>true</GenerateManifests>
+    <ApplicationIcon>globe.ico</ApplicationIcon>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <SignManifests>false</SignManifests>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <TargetZone>Custom</TargetZone>
@@ -29,29 +25,19 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <TargetFrameworkProfile />
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
-    <PublishUrl>\\recsysapps\c%24\inetpub\wwwroot\RecSys_App_Deployment\Utilities\WebPad\</PublishUrl>
+    <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Background</UpdateMode>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://recsysapps:8090/Utilities/WebPad/</InstallUrl>
-    <PublisherName>821</PublisherName>
-    <SuiteName>Utilities</SuiteName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>23</ApplicationRevision>
+    <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -283,6 +269,9 @@
       <Project>{4abb6100-6b14-4eba-a338-2f158fe9ac06}</Project>
       <Name>WebPad.Dependencies.General</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="globe.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

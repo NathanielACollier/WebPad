@@ -34,6 +34,24 @@ namespace WebPad.Rendering
 
 
 
+        public void ScrollBrowserTo(int lineNumber, int column)
+        {
+            if( _myBrowser != null)
+            {
+                var doc = _myBrowser.Document as MSHTML.HTMLDocument;
+                // if the user hasn't hit F5 then the web browser control won't show anything
+                if ( doc != null)
+                {
+                    
+
+                }
+                
+            }
+        }
+
+
+
+
         public void Render( UserControls.SnippetDocumentControl snippetDocControl)
         {
             // load the document text into the internet explorer browser

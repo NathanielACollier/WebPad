@@ -17,6 +17,7 @@ namespace WebPad.UserControls
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public event Action<object, HtmlEditorCaretPositionChangeEventArgs> HtmlEditorCaretPositionChangeDelayedEvent;
 
         private readonly CodeCompletionBase _htmlCompletion;
         private readonly CodeCompletionBase _javascriptCompletion;
@@ -72,6 +73,15 @@ namespace WebPad.UserControls
             int lineNumber = line.LineNumber;
             // log it for now
             log.Info($"Caret position changed in text editor.  [Line={lineNumber}, CharAt={posInLine}]");
+
+            if( this.HtmlEditorCaretPositionChangeDelayedEvent != null)
+            {
+                this.HtmlEditorCaretPositionChangeDelayedEvent(this,new HtmlEditorCaretPositionChangeEventArgs
+                {
+                    LineNumber = lineNumber,
+                    Column = posInLine
+                });
+            }
         }
 
         private void Caret_PositionChanged(object sender, EventArgs e)

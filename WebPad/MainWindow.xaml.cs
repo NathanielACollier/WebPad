@@ -237,7 +237,33 @@ namespace WebPad
 
             UpdateHeaderOfSnippetDocumentControl(bodyCtrl, tabName);
 
+
+            bodyCtrl.HtmlEditorCaretPositionChangeDelayedEvent += CurrentSnippetDocument_HtmlEditorCaretPositionChangeDelayedEvent;
+
             return bodyCtrl;
+        }
+
+        private void CurrentSnippetDocument_HtmlEditorCaretPositionChangeDelayedEvent(object sender, HtmlEditorCaretPositionChangeEventArgs args)
+        {
+            var docCtrl = sender as UserControls.SnippetDocumentControl;
+
+            if( docCtrl != null)
+            {
+                var selectedDoc = this.GetSelectedTabSnippetDocumentControl();
+
+                if( selectedDoc != null)
+                {
+
+                    if( docCtrl != selectedDoc)
+                    {
+                        // turn the event off, it's not this doc
+                        docCtrl.HtmlEditorCaretPositionChangeDelayedEvent -= CurrentSnippetDocument_HtmlEditorCaretPositionChangeDelayedEvent;
+                    }
+
+                    // scroll the web browser to the line?
+                    this._resultsRenderer.ScrollBrowserTo(args.LineNumber, args.Column);
+                }
+            }
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

@@ -75,6 +75,7 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -113,6 +114,7 @@
       <DependentUpon>EditSnippetOptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChildWindows\EditSnippetOptionsWindowModel.cs" />
+    <Compile Include="Rendering\HtmlInjectLineNumberAnchors.cs" />
     <Compile Include="UserControls\HtmlEditorCaretPositionChangeEventArgs.cs" />
     <Compile Include="Utilities\PathUtilities.cs" />
     <Compile Include="Utilities\XmlSerialization.cs" />

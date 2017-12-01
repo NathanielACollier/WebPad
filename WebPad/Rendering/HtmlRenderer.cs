@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace WebPad.Rendering
@@ -42,9 +43,26 @@ namespace WebPad.Rendering
                 // if the user hasn't hit F5 then the web browser control won't show anything
                 if ( doc != null)
                 {
-                    
+                    var lineAnchors = doc.getElementsByClassName(Rendering.HtmlInjectLineNumberAnchors.cssClassMarker)
+                                                .OfType<MSHTML.HTMLGenericElement>();
 
-                }
+                    // first element greater than or equal to line number (Scroll to it)
+                    var greaterThanEqualToLineNumber = from e in lineAnchors
+                                                       let num = Convert.ToInt32(e.getAttribute("linenumber") as string)
+                                                       where num >= lineNumber
+                                                       select e;
+
+                    if( greaterThanEqualToLineNumber.Any())
+                    {
+                        var target = greaterThanEqualToLineNumber.First();
+                        log.Info($"Scrolling to element with source line {target.getAttribute("linenumber", 0)}, column {target.getAttribute("column")}");
+                        target.scrollIntoView();
+                    }else
+                    {
+                        log.Info($"No element found at line {lineNumber}, so scrolling to end");
+                        lineAnchors.Last().scrollIntoView();
+                    }
+                 }
                 
             }
         }

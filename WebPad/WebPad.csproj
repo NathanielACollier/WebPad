@@ -75,6 +75,7 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -113,6 +114,8 @@
       <DependentUpon>EditSnippetOptionsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ChildWindows\EditSnippetOptionsWindowModel.cs" />
+    <Compile Include="Rendering\HtmlInjectLineNumberAnchors.cs" />
+    <Compile Include="UserControls\HtmlEditorCaretPositionChangeEventArgs.cs" />
     <Compile Include="Utilities\PathUtilities.cs" />
     <Compile Include="Utilities\XmlSerialization.cs" />
     <Compile Include="WebServer\WebPadServerManager.cs" />
@@ -272,6 +275,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="globe.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MSHTML">
+      <Guid>{3050F1C5-98B5-11CF-BB82-00AA00BDCE0B}</Guid>
+      <VersionMajor>4</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

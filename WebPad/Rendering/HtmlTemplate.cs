@@ -21,7 +21,7 @@ namespace WebPad.Rendering
                 cssRefs = References.GetHtml(snippetDocControl.References.Where(i => i.Type == ReferenceTypes.Css)
                     ),
                 Javascript = snippetDocControl.Javascript,
-                Html = snippetDocControl.Html,
+                Html = HtmlInjectLineNumberAnchors.Inject(snippetDocControl.Html),
                 CSS = snippetDocControl.CSS,
                 PageTitle = snippetDocControl.SaveFileName,
                 BaseHref = string.IsNullOrWhiteSpace(snippetDocControl.BaseHref) ? "/" : snippetDocControl.BaseHref

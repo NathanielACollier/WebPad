@@ -4,6 +4,9 @@ using System.Windows.Controls;
 using ICSharpCode.AvalonEdit.Highlighting;
 using WebPad.CodeCompletion;
 using WebPad.Rendering;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace WebPad.UserControls
 {
@@ -14,12 +17,20 @@ namespace WebPad.UserControls
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public event Action<object, HtmlEditorCaretPositionChangeEventArgs> HtmlEditorCaretPositionChangeDelayedEvent;
 
         private readonly CodeCompletionBase _htmlCompletion;
         private readonly CodeCompletionBase _javascriptCompletion;
         private readonly CodeCompletionBase _css3SelectorCompletion;
 
         private WebServer.WebPadServerManager _internalServer;
+
+
+        // don't want rapid firing of Position change events.  We are going to make a HtmlEditorCaretPositionDelayedChange
+        DispatcherTimer htmlTextEditorCaretPositionChangeDelayTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(400)
+        };
 
 
         // this is where references are stored an executed at
@@ -47,6 +58,64 @@ namespace WebPad.UserControls
             txtJavascript.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("JavaScript");
             txtCSS.SyntaxHighlighting = HighlightingManager.Instance.GetDefinition("CSS");
 
+            htmlTextEditorCaretPositionChangeDelayTimer.Tick += HtmlTextEditorCaretPositionChangeDelayTimer_Tick;
+            txtHtml.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+        }
+
+        private void HtmlTextEditorCaretPositionChangeDelayTimer_Tick(object sender, EventArgs e)
+        {
+            // stop the timer
+            htmlTextEditorCaretPositionChangeDelayTimer.Stop();
+            // calculate line position
+            var pos = txtHtml.CaretOffset;
+            var line = txtHtml.Document.GetLineByOffset(pos);
+            int posInLine = pos - line.Offset;
+            int lineNumber = line.LineNumber;
+            // log it for now
+            log.Info($"Caret position changed in text editor.  [Line={lineNumber}, CharAt={posInLine}]");
+
+            if( this.HtmlEditorCaretPositionChangeDelayedEvent != null)
+            {
+                this.HtmlEditorCaretPositionChangeDelayedEvent(this,new HtmlEditorCaretPositionChangeEventArgs
+                {
+                    LineNumber = lineNumber,
+                    Column = posInLine
+                });
+            }
+        }
+
+        private void Caret_PositionChanged(object sender, EventArgs e)
+        {
+            htmlTextEditorCaretPositionChangeDelayTimer.Stop();
+            htmlTextEditorCaretPositionChangeDelayTimer.Start();
+        }
+
+
+        private Task<int> GetElementRefFromHtmlEditorCurrentCaret()
+        {
+            var promise = new TaskCompletionSource<int>();
+
+            var currentCaret = this.txtHtml.CaretOffset;
+            var doc = this.txtHtml.Document;
+
+            var t = new Thread(() =>
+            {
+                try
+                {
+                    var ch = doc.GetCharAt(currentCaret);
+                    var line = doc.GetLineByOffset(currentCaret);
+                    
+
+                    promise.SetResult(0);
+                }catch(Exception ex)
+                {
+                    log.Error($"Error getting element ref.  Exception: {ex}");
+                    promise.SetResult(-1);
+                }
+            });
+            t.Start();
+
+            return promise.Task;
         }
 
 

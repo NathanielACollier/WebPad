@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Snippet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Html>&lt;div class="helloWorld" id="helloWorldDiv"&gt;&lt;/div&gt;</Html>
+  <Javascript>$(document).ready(function(){
+	$("#helloWorldDiv").text("Hello World!");
+});</Javascript>
+  <CSS>
+.helloWorld{
+	font-weight:bold;
+	font-size:72pt;
+	color:red;
+}</CSS>
+  <References>
+    <Reference>
+      <Type>Javascript</Type>
+      <Url>http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js</Url>
+    </Reference>
+    <Reference>
+      <Type>Javascript</Type>
+      <Url>http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js</Url>
+    </Reference>
+  </References>
+</Snippet>

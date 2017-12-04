@@ -47,7 +47,10 @@ namespace WebPad.Rendering
                     //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
                     var docWithEvents = _myBrowser.Document as MSHTML.HTMLDocumentEvents2_Event;
 
-                    docWithEvents.onclick += new MSHTML.HTMLDocumentEvents2_onclickEventHandler(this.myWebBrowser_DocumentClickEvent);
+                    var onClickHandler = new DHTMLEventHandler(doc);
+                    onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);
+
+                    docWithEvents.onclick += onClickHandler;
                     docWithEvents.onmouseover += DocWithEvents_onmouseover;
                     docWithEvents.onmouseout += DocWithEvents_onmouseout;
                 };
@@ -97,7 +100,7 @@ namespace WebPad.Rendering
 
 
 
-        protected bool myWebBrowser_DocumentClickEvent(MSHTML.IHTMLEventObj args)
+        protected void myWebBrowser_DocumentClickEvent(MSHTML.IHTMLEventObj args)
         {
             if( args.srcElement != null)
             {
@@ -110,7 +113,8 @@ namespace WebPad.Rendering
                 }
             }
 
-            return false;
+            // see: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
+            args.returnValue = false;
         }
 
 

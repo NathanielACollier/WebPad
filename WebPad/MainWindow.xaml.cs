@@ -156,6 +156,8 @@ namespace WebPad
 
             _resultsRenderer = new HtmlRenderer(grdInternetExplorerResults);
 
+            _resultsRenderer.WebBrowserElementClicked += _resultsRenderer_WebBrowserElementClicked;
+
             AddLogTab();
             log.Info("Application Started");
 
@@ -166,6 +168,17 @@ namespace WebPad
             Closing += OnClosing;
 
             LoadPreferences(Settings.Default);
+        }
+
+        private void _resultsRenderer_WebBrowserElementClicked(object _sender, WebBrowserElementClickedEventArgs args)
+        {
+            // get current snippet doc
+            var currentDocCtrl = GetSelectedTabSnippetDocumentControl();
+
+            if( currentDocCtrl != null)
+            {
+                currentDocCtrl.SetHTMLEditorPosition(args.LineNumber, args.Column);
+            }
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)

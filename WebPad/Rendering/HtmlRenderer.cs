@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace WebPad.Rendering
 {
@@ -47,6 +48,8 @@ namespace WebPad.Rendering
                     var docWithEvents = _myBrowser.Document as MSHTML.HTMLDocumentEvents2_Event;
 
                     docWithEvents.onclick += new MSHTML.HTMLDocumentEvents2_onclickEventHandler(this.myWebBrowser_DocumentClickEvent);
+                    docWithEvents.onmouseover += DocWithEvents_onmouseover;
+                    docWithEvents.onmouseout += DocWithEvents_onmouseout;
                 };
 
 
@@ -59,6 +62,37 @@ namespace WebPad.Rendering
                 System.Windows.MessageBox.Show(string.Format("Problem occured loading internet explorer browser.  Exception: {0}", ex), "Internet Explorer Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
 
+        }
+
+
+
+        // idea and original code for highlight on hover from: https://stackoverflow.com/questions/1090754/c-sharp-web-browser-with-click-and-highlight
+        // keep up with what elements we've marked with a highlight
+        //   - also holds the original style so we can set it back after the mouse leaves
+        private IDictionary<MSHTML.IHTMLElement, string> elementStyles = new Dictionary<MSHTML.IHTMLElement, string>();
+
+        private void DocWithEvents_onmouseover(MSHTML.IHTMLEventObj pEvtObj)
+        {
+            if(!this.elementStyles.ContainsKey(pEvtObj.srcElement))
+            {
+                // capture the original style so we can set it back when mouse leaves
+                string style = pEvtObj.srcElement.style.cssText;
+                this.elementStyles.Add(pEvtObj.srcElement, style); // saved
+                // now change it
+                pEvtObj.srcElement.style.cssText = style + "; background-color: purple;";
+                
+            }
+        }
+
+
+        private void DocWithEvents_onmouseout(MSHTML.IHTMLEventObj pEvtObj)
+        {
+            if(this.elementStyles.ContainsKey(pEvtObj.srcElement))
+            {
+                string originalStyle = this.elementStyles[pEvtObj.srcElement];
+                this.elementStyles.Remove(pEvtObj.srcElement);
+                pEvtObj.srcElement.style.cssText = originalStyle;
+            }
         }
 
 

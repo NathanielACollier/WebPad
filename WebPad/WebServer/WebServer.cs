@@ -12,10 +12,11 @@ namespace WebPad.WebServer
 
     public class WebServer
     {
+        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly HttpListener _listener = new HttpListener();
-        private readonly Func<HttpListenerRequest, string> _responderMethod;
+        private readonly Action<HttpListenerRequest, HttpListenerResponse> _responderMethod;
 
-        public WebServer(Func<HttpListenerRequest, string> method, params string[] prefixes)
+        public WebServer(Action<HttpListenerRequest, HttpListenerResponse> method, params string[] prefixes)
         {
             if (!HttpListener.IsSupported)
             {
@@ -63,14 +64,12 @@ namespace WebPad.WebServer
                                     return;
                                 }
 
-                                var rstr = _responderMethod(ctx.Request);
-                                var buf = Encoding.UTF8.GetBytes(rstr);
-                                ctx.Response.ContentLength64 = buf.Length;
-                                ctx.Response.OutputStream.Write(buf, 0, buf.Length);
+                                _responderMethod(ctx.Request, ctx.Response);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 // ignored
+                                log.Error($"Web Server Exception: {ex}");
                             }
                             finally
                             {

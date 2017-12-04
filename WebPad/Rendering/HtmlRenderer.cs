@@ -11,6 +11,7 @@ namespace WebPad.Rendering
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        public event Action<object, WebBrowserElementClickedEventArgs> WebBrowserElementClicked;
 
         // built in internet explorer
         //  Will use whatever version the user has installed
@@ -46,6 +47,7 @@ namespace WebPad.Rendering
                     //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
                     //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
                     //  -- and: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
+
                     var doc = _myBrowser.Document as MSHTML.HTMLDocument;
 
                     var doc2 = doc as MSHTML.DispHTMLDocument; // events are on this guy
@@ -121,6 +123,14 @@ namespace WebPad.Rendering
                 if( lineNumber != null)
                 {
                     log.Info($"Element clicked with AvalonEdit html source line number {lineNumber}");
+                    if( this.WebBrowserElementClicked != null)
+                    {
+                        this.WebBrowserElementClicked(this._myBrowser, new WebBrowserElementClickedEventArgs
+                        {
+                            LineNumber = lineNumber,
+                            Column = column
+                        });
+                    }
                 }
             }
 

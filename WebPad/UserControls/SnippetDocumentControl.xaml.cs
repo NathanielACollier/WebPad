@@ -120,6 +120,32 @@ namespace WebPad.UserControls
         }
 
 
+
+        public void SetHTMLEditorPosition( string lineNumberText, string columnText)
+        {
+            if( !int.TryParse(lineNumberText, out int lineNumber))
+            {
+                throw new ArgumentException("Not a valid integer", "lineNumberText");
+            }
+
+            if( !int.TryParse(columnText, out int column))
+            {
+                throw new ArgumentException("Not a valid integer", "columnText");
+            }
+
+            if( txtHtml != null && txtHtml.TextArea != null)
+            {
+                var line = txtHtml.Document.GetLineByNumber(lineNumber);
+
+                if( line != null)
+                {
+                    int newOffset = line.Offset + column;
+                    txtHtml.TextArea.Caret.Offset = newOffset;
+                    txtHtml.TextArea.Caret.BringCaretToView();
+                }
+            }
+        }
+
         private Task<int> GetElementRefFromHtmlEditorCurrentCaret()
         {
             var promise = new TaskCompletionSource<int>();

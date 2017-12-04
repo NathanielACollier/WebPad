@@ -116,6 +116,7 @@
     <Compile Include="ChildWindows\EditSnippetOptionsWindowModel.cs" />
     <Compile Include="Rendering\DHTMLEvent.cs" />
     <Compile Include="Rendering\HtmlInjectLineNumberAnchors.cs" />
+    <Compile Include="Rendering\WebBrowserElementClickedEventArgs.cs" />
     <Compile Include="UserControls\HtmlEditorCaretPositionChangeEventArgs.cs" />
     <Compile Include="Utilities\PathUtilities.cs" />
     <Compile Include="Utilities\WebBrowserUtil.cs" />

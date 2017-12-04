@@ -45,10 +45,10 @@ namespace WebPad.Rendering
                     // to be able to get clicks in the document
                     //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
                     //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
-                    var docWithEvents = _myBrowser.Document as MSHTML.HTMLDocumentEvents2_Event;
-                    var doc = docWithEvents as MSHTML.HTMLDocument;
+                    //  -- and: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
+                    var doc = _myBrowser.Document as MSHTML.HTMLDocument;
 
-                    var doc2 = doc as MSHTML.DispHTMLDocument;
+                    var doc2 = doc as MSHTML.DispHTMLDocument; // events are on this guy
 
                     var onClickHandler = new DHTMLEventHandler(doc);
                     onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);

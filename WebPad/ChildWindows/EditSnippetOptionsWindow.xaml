@@ -17,9 +17,17 @@
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Top">
+            <!-- display the exact model value so we can see it-->
+            <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path:  "></TextBlock>
+            <TextBlock DockPanel.Dock="Left" Text="{Binding Path=ExternalHtmlTemplatePath}"></TextBlock>
+        </DockPanel>
+
+        <DockPanel DockPanel.Dock="Top">
             <TextBlock DockPanel.Dock="Left" Text="Base href"></TextBlock>
             <TextBox Text="{Binding Path=BaseHref, Mode=TwoWay}" TextChanged="BaseHrefTextBox_TextChanged" />
         </DockPanel>
+
+
 
         <DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
             <Button Content="Save" Name="SaveOptionsButton" Click="SaveOptionsButton_Click"></Button>

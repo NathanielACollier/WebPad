@@ -9,6 +9,8 @@ namespace WebPad.WebServer
 {
     public class WebPadServerManager
     {
+        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 
         private UserControls.SnippetDocumentControl control;
 
@@ -42,14 +44,46 @@ namespace WebPad.WebServer
                     this._url = $"http://localhost:{port}/";
 
                     this.server = new WebServer((request)=>{
-                        string text = "";
-                        // see: http://stackoverflow.com/questions/23442543/using-async-await-with-dispatcher-begininvoke
-                        this.control.Dispatcher.InvokeAsync(() =>
-                        {
-                            text = Rendering.HtmlTemplate.GetDocumentText(this.control);
-                        }).Wait();
 
-                        return text;
+                        if( request.Url.LocalPath == "/")
+                        {
+                            // serve webpage
+                            string text = "";
+                            // see: http://stackoverflow.com/questions/23442543/using-async-await-with-dispatcher-begininvoke
+                            this.control.Dispatcher.InvokeAsync(() =>
+                            {
+                                text = Rendering.HtmlTemplate.GetDocumentText(this.control);
+                            }).Wait();
+
+                            
+                            return text;
+                        } else
+                        {
+                            // try to serve static file
+                            log.Info($"Incoming request: {request.Url.LocalPath}");
+                            string baseDirectory = null;
+
+                            if(!string.IsNullOrWhiteSpace(this.control.SaveFilePath))
+                            {
+                                baseDirectory = System.IO.Path.GetDirectoryName(this.control.SaveFilePath) + "\\";
+                                if (!string.IsNullOrWhiteSpace(this.control.BaseHref))
+                                {
+                                    baseDirectory = Utilities.PathUtilities.MakeAbsolutePath(baseDirectory, this.control.BaseHref);
+                                }
+
+                                // serve the image???
+                                string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\');
+                                log.Info($"Serving static file with [webpath={request.Url.LocalPath}, sysPath={filePath}]");
+
+                                if(System.IO.File.Exists(filePath))
+                                {
+                                    return System.IO.File.ReadAllText(filePath);
+                                }
+                            }
+
+                            return string.Empty;
+                        }
+
                     }, this.Url);
                     this.server.Run();
                     this.IsRunning = true;

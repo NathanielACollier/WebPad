@@ -19,6 +19,7 @@ namespace WebPad.Rendering
     /// Handles a basic event object which receives an IHTMLEventObj which
     /// applies to all document events raised.
     ///
+    [ComVisible(true)]
     public class DHTMLEventHandler
     {
         public DHTMLEvent Handler;

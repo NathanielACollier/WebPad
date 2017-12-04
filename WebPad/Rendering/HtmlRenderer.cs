@@ -46,13 +46,24 @@ namespace WebPad.Rendering
                     //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
                     //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
                     var docWithEvents = _myBrowser.Document as MSHTML.HTMLDocumentEvents2_Event;
+                    var doc = docWithEvents as MSHTML.HTMLDocument;
+
+                    var doc2 = doc as MSHTML.DispHTMLDocument;
 
                     var onClickHandler = new DHTMLEventHandler(doc);
                     onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);
 
-                    docWithEvents.onclick += onClickHandler;
-                    docWithEvents.onmouseover += DocWithEvents_onmouseover;
-                    docWithEvents.onmouseout += DocWithEvents_onmouseout;
+                    doc2.onclick = onClickHandler;
+
+                    var onMouseOverHandler = new DHTMLEventHandler(doc);
+                    onMouseOverHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseover);
+
+                    doc2.onmouseover = onMouseOverHandler;
+
+                    var onMouseOutHandler = new DHTMLEventHandler(doc);
+                    onMouseOutHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseout);
+
+                    doc2.onmouseout = onMouseOutHandler;
                 };
 
 

@@ -30,6 +30,7 @@ namespace WebPad.CodeCompletion
             data.Add(new CodeCompletionDataBase(this, "br"));
             data.Add(new CodeCompletionDataBase(this, "button"));
             data.Add(new CodeCompletionDataBase(this, "caption"));
+            data.Add(new CodeCompletionDataBase(this, "p", "Paragraph"));
         }
     }
 }

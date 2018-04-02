@@ -48,11 +48,14 @@ namespace WebPad.WebServer
             public string contentType { get; set; }
         }
 
+        // here is some documentation on mimetypeps: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
         private static Dictionary<string, FileServeData> staticFileServeLookup = new Dictionary<string, FileServeData>(StringComparer.OrdinalIgnoreCase)
         {
             {".css", new FileServeData{ IsBinary=false, contentType="text/css"} }
             ,{".html",new FileServeData{IsBinary = false, contentType="application/text" } }
             ,{".js",new FileServeData{IsBinary = false, contentType="text/javascript" } }
+            ,{".svg", new FileServeData{IsBinary=false, contentType="image/svg+xml" }}
+            ,{".png", new FileServeData{IsBinary=true, contentType="image/png"}}
         };
 
 
@@ -114,6 +117,9 @@ namespace WebPad.WebServer
                                         if (dictEntry.IsBinary == false)
                                         {
                                             WriteTextResponse(response, dictEntry.contentType, System.IO.File.ReadAllText(filePath));
+                                        } else
+                                        {
+                                            WriteBinaryResponse(response, dictEntry.contentType, System.IO.File.ReadAllBytes(filePath));
                                         }
                                     }
                                     else

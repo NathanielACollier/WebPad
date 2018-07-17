@@ -104,7 +104,8 @@ namespace WebPad.WebServer
                                 }
 
                                 // serve the image???
-                                string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\');
+                                string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\')
+                                                                            .Replace("~", "\\");
                                 log.Info($"Serving static file with [webpath={request.Url.LocalPath}, sysPath={filePath}]");
 
                                 if(System.IO.File.Exists(filePath))

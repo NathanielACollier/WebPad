@@ -24,10 +24,17 @@ namespace WebPad.Models
         }
 
 
-        public readonly ICommand OpenRecentFileCommand = new RelayCommand(win =>
-       {
-           var window = (Window)win;
-       });
+        public ICommand OpenRecentFileCommand
+        {
+            get {
+                return new RelayCommand(win =>
+                {
+                    var window = (Window)win;
+                });
+            }
+        }
+
+
 
     }
 }

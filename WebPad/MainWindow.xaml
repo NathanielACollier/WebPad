@@ -28,7 +28,23 @@
             <MenuItem Header="_File">
                 <MenuItem Command="ApplicationCommands.New" />
                 <MenuItem Command="ApplicationCommands.Open" />
-
+                <MenuItem Header="Recent">
+                    <Menu ItemsSource="{Binding Path=Model.RecentFiles, RelativeSource={RelativeSource FindAncestor, 
+                           AncestorType={x:Type Window}}}">
+                        <Menu.ItemContainerStyle>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Command" Value="{Binding Path=OpenRecentFileCommand}" />
+                                <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, 
+                           AncestorType={x:Type Window}}}" />
+                            </Style>
+                        </Menu.ItemContainerStyle>
+                        <Menu.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=FileName}" />
+                            </DataTemplate>
+                        </Menu.ItemTemplate>
+                    </Menu>
+                </MenuItem>
                 <MenuItem Command="ApplicationCommands.Save" />
                 <MenuItem x:Name="MenuSaveAsWebPad" Header="Save As"></MenuItem>
                 <Separator />

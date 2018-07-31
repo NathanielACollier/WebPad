@@ -91,6 +91,8 @@ namespace WebPad
 
             MenuSaveAsWebPad.Command = CommandSaveAsWebPad;
             CommandBindings.Add(new CommandBinding(CommandSaveAsWebPad, ExecuteSaveAsWebPad));
+
+
             
 
             // window commands
@@ -145,11 +147,40 @@ namespace WebPad
 
         private int newQueryCount = 0;
 
+
+        #region Model DP
+
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(MainWindowModel), typeof(MainWindow));
+
+        public MainWindowModel Model
+        {
+            get { return this.GetValueThreadSafe<MainWindowModel>(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        #endregion
+
+
+
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public MainWindow()
         {
             InitializeComponent();
+            this.Model = new MainWindowModel();
+
+            this.Model.RecentFiles.Add(new Models.RecentFileModel
+            {
+                FileName = "Testing.docx",
+                Path = "HeyWhoAreYou/test/apple/Testing.docx"
+            });
+
+            this.Model.RecentFiles.Add(new Models.RecentFileModel
+            {
+                FileName = "HappyDays.docx",
+                Path = "Testing..."
+            });
+
             Log4NetHelpers.CodeConfiguredUtilities.InitializeLog4Net();
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/Resources/Images/globe.ico", UriKind.RelativeOrAbsolute));
 

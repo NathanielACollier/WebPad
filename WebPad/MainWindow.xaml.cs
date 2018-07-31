@@ -22,7 +22,9 @@ using LogViewer = WebPad.Dependencies.General.WPFUserControls.LogViewer;
 using LocalFolderBrowser = WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;
 
 using WebPad.Dependencies.General.Extensions.WPF;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace WebPad
 {
@@ -169,17 +171,14 @@ namespace WebPad
             InitializeComponent();
             this.Model = new MainWindowModel();
 
-            this.Model.RecentFiles.Add(new Models.RecentFileModel
+            populateListOfRecentFiles().ContinueWith((t) =>
             {
-                FileName = "Testing.docx",
-                Path = "HeyWhoAreYou/test/apple/Testing.docx"
+                foreach( var entry in t.Result)
+                {
+                    this.Model.RecentFiles.Add(entry);
+                }
             });
 
-            this.Model.RecentFiles.Add(new Models.RecentFileModel
-            {
-                FileName = "HappyDays.docx",
-                Path = "Testing..."
-            });
 
             Log4NetHelpers.CodeConfiguredUtilities.InitializeLog4Net();
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/Resources/Images/globe.ico", UriKind.RelativeOrAbsolute));
@@ -200,6 +199,26 @@ namespace WebPad
 
             LoadPreferences(Settings.Default);
         }
+
+
+
+
+        private Task<List<Models.RecentFileModel>> populateListOfRecentFiles()
+        {
+            var p = new TaskCompletionSource<List<Models.RecentFileModel>>();
+
+            var t = new Thread(() =>
+            {
+
+            });
+
+            t.Start();
+
+
+            return p.Task;
+        }
+
+
 
         private void _resultsRenderer_WebBrowserElementClicked(object _sender, WebBrowserElementClickedEventArgs args)
         {

@@ -174,10 +174,14 @@ namespace WebPad
 
             populateListOfRecentFiles().ContinueWith((t) =>
             {
-                foreach( var entry in t.Result)
+                this.Dispatcher.Invoke(() =>
                 {
-                    this.Model.RecentFiles.Add(entry);
-                }
+                    foreach (var entry in t.Result)
+                    {
+                        this.Model.RecentFiles.Add(entry);
+                    }
+                });
+
             });
 
 
@@ -255,6 +259,16 @@ namespace WebPad
         }
 
 
+        private async Task handleAddingRecentFile(Models.RecentFileModel file)
+        {
+            if( await addRecentFile(file) > 0)
+            {
+                // it was a new recent file so add it to model
+                this.Model.RecentFiles.Add(file);
+            }
+        }
+
+
         private Task<int> addRecentFile(Models.RecentFileModel file)
         {
             var p = new TaskCompletionSource<int>();
@@ -265,7 +279,7 @@ namespace WebPad
                 var existingEntryResult = db.Query(@"
                     select *
                     from RecentFiles
-                    where LOWER(Path) = :path
+                    where LOWER(FullPath) = :path
                 ", new Dictionary<string, object>
                 {
                     {":path", file.Path.ToLower() }
@@ -274,7 +288,7 @@ namespace WebPad
                 if(!existingEntryResult.Any())
                 {
                     db.Command(@"
-                    insert into RecentFiles(FileName, Path, Type)
+                    insert into RecentFiles(FileName, FullPath, Type)
                     values(:name, :path, :type)
                     ", new Dictionary<string, object>
                     {
@@ -282,8 +296,12 @@ namespace WebPad
                         {":path", file.Path },
                         {":type", file.Type.ToString() }
                     });
+                    p.SetResult(1);
                 }
-
+                else
+                {
+                    p.SetResult(-1);
+                }
             });
 
             t.Start();
@@ -746,7 +764,7 @@ namespace WebPad
                 SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad);
                 if (snippet != null)
                 {
-                    addRecentFile(new Models.RecentFileModel
+                    handleAddingRecentFile(new Models.RecentFileModel
                     {
                         Path = snippet.SaveFilePath,
                         FileName = snippet.SaveFileName,

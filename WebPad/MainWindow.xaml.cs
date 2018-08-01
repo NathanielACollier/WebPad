@@ -220,14 +220,14 @@ namespace WebPad
         }
 
 
-        private Models.RecentFileModel.Types GetRecentFileTimeFromString(string text)
+        private File.SaveHandler.SaveType GetRecentFileTypeFromString(string text)
         {
             if(string.IsNullOrWhiteSpace(text))
             {
-                return Models.RecentFileModel.Types.WebPad;
+                return File.SaveHandler.SaveType.WebPad;
             }
 
-            return (Models.RecentFileModel.Types)Enum.Parse(typeof(Models.RecentFileModel.Types), text);
+            return (File.SaveHandler.SaveType)Enum.Parse(typeof(File.SaveHandler.SaveType), text);
         }
 
 
@@ -246,7 +246,7 @@ namespace WebPad
                 {
                     FileName = dict["FileName"] as string,
                     Path = dict["FullPath"] as string,
-                    Type = GetRecentFileTimeFromString(dict["Type"] as string)
+                    Type = GetRecentFileTypeFromString(dict["Type"] as string)
                 });
 
                 p.SetResult(files.ToList());
@@ -258,6 +258,17 @@ namespace WebPad
             return p.Task;
         }
 
+
+
+        public void OpenRecentFile(Models.RecentFileModel file)
+        {
+            SnippetDocumentControl snippet = File.OpenHandler.Open(file.Type, file.Path);
+
+            if ( snippet != null)
+            {
+                AddSnippetTab(snippet);
+            }
+        }
 
         private async Task handleAddingRecentFile(Models.RecentFileModel file)
         {
@@ -768,7 +779,7 @@ namespace WebPad
                     {
                         Path = snippet.SaveFilePath,
                         FileName = snippet.SaveFileName,
-                        Type = Models.RecentFileModel.Types.WebPad
+                        Type = File.SaveHandler.SaveType.WebPad
                     });
 
                     AddSnippetTab(snippet);

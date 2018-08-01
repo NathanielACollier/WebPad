@@ -12,11 +12,6 @@ namespace WebPad.Models
     public class RecentFileModel : ViewModelBase
     {
 
-        public enum Types
-        {
-            WebPad, HTML
-        }
-
         public string FileName
         {
             get { return GetValue(() => this.FileName); }
@@ -29,7 +24,7 @@ namespace WebPad.Models
             set { SetValue(() => this.Path, value); }
         }
 
-        public Types Type
+        public File.SaveHandler.SaveType Type
         {
             get { return GetValue(() => this.Type); }
             set { SetValue(() => this.Type, value); }
@@ -41,7 +36,8 @@ namespace WebPad.Models
             get {
                 return new RelayCommand(win =>
                 {
-                    var window = (Window)win;
+                    var window = (MainWindow)win;
+                    window.OpenRecentFile(this);
                 });
             }
         }

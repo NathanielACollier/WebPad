@@ -162,7 +162,7 @@ namespace WebPad
 
         #endregion
 
-
+        netstandardDbSQLiteHelper.Database db = null;
 
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -170,6 +170,7 @@ namespace WebPad
         {
             InitializeComponent();
             this.Model = new MainWindowModel();
+            setupFileDatabase();
 
             populateListOfRecentFiles().ContinueWith((t) =>
             {
@@ -201,6 +202,29 @@ namespace WebPad
         }
 
 
+        private void setupFileDatabase()
+        {
+            this.db = new netstandardDbSQLiteHelper.Database(Properties.Settings.Default.DatabaseFilePath);
+
+            db.Command(@"
+                create table if not exists RecentFiles(
+                    FileName varchar(200) not null,
+                    FullPath varchar(2000) not null,
+                    Type varchar(100) not null
+                )
+            ");
+        }
+
+
+        private Models.RecentFileModel.Types GetRecentFileTimeFromString(string text)
+        {
+            if(string.IsNullOrWhiteSpace(text))
+            {
+                return Models.RecentFileModel.Types.WebPad;
+            }
+
+            return (Models.RecentFileModel.Types)Enum.Parse(typeof(Models.RecentFileModel.Types), text);
+        }
 
 
         private Task<List<Models.RecentFileModel>> populateListOfRecentFiles()
@@ -209,11 +233,60 @@ namespace WebPad
 
             var t = new Thread(() =>
             {
+                var recentEntries = db.Query(@"
+                    select *
+                    from RecentFiles
+                ");
 
+                var files = recentEntries.Select(dict => new Models.RecentFileModel
+                {
+                    FileName = dict["FileName"] as string,
+                    Path = dict["FullPath"] as string,
+                    Type = GetRecentFileTimeFromString(dict["Type"] as string)
+                });
+
+                p.SetResult(files.ToList());
             });
 
             t.Start();
 
+
+            return p.Task;
+        }
+
+
+        private Task<int> addRecentFile(Models.RecentFileModel file)
+        {
+            var p = new TaskCompletionSource<int>();
+
+            var t = new Thread(() =>
+            {
+
+                var existingEntryResult = db.Query(@"
+                    select *
+                    from RecentFiles
+                    where LOWER(Path) = :path
+                ", new Dictionary<string, object>
+                {
+                    {":path", file.Path.ToLower() }
+                });
+
+                if(!existingEntryResult.Any())
+                {
+                    db.Command(@"
+                    insert into RecentFiles(FileName, Path, Type)
+                    values(:name, :path, :type)
+                    ", new Dictionary<string, object>
+                    {
+                        {":name", file.FileName },
+                        {":path", file.Path },
+                        {":type", file.Type.ToString() }
+                    });
+                }
+
+            });
+
+            t.Start();
 
             return p.Task;
         }
@@ -673,6 +746,13 @@ namespace WebPad
                 SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad);
                 if (snippet != null)
                 {
+                    addRecentFile(new Models.RecentFileModel
+                    {
+                        Path = snippet.SaveFilePath,
+                        FileName = snippet.SaveFileName,
+                        Type = Models.RecentFileModel.Types.WebPad
+                    });
+
                     AddSnippetTab(snippet);
                 } else
                 {

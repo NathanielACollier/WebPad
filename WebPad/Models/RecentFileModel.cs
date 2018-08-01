@@ -11,6 +11,12 @@ namespace WebPad.Models
 {
     public class RecentFileModel : ViewModelBase
     {
+
+        public enum Types
+        {
+            WebPad, HTML
+        }
+
         public string FileName
         {
             get { return GetValue(() => this.FileName); }
@@ -21,6 +27,12 @@ namespace WebPad.Models
         {
             get { return GetValue(() => this.Path); }
             set { SetValue(() => this.Path, value); }
+        }
+
+        public Types Type
+        {
+            get { return GetValue(() => this.Type); }
+            set { SetValue(() => this.Type, value); }
         }
 
 

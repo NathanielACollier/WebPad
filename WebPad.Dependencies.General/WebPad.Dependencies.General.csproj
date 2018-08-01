@@ -112,7 +112,6 @@
     <Compile Include="WPFUtilities\Run\RunOnUIArgs.cs" />
     <Compile Include="WPFUtilities\Run\RunResult.cs" />
     <Compile Include="WPFUtilities\WindowHelpers.cs" />
-    <Compile Include="WPFViewModelBase\Command.cs" />
     <Compile Include="WPFViewModelBase\RelayCommand.cs" />
     <Compile Include="WPFViewModelBase\ViewModelBase.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

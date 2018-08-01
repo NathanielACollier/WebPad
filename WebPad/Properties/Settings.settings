@@ -41,5 +41,8 @@
     <Setting Name="ChromeEXEPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</Value>
     </Setting>
+    <Setting Name="DatabaseFilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">temp.db</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

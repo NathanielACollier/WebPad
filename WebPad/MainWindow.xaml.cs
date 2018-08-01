@@ -270,6 +270,13 @@ namespace WebPad
             }
         }
 
+
+        public void RenameRecentFile(Models.RecentFileModel file)
+        {
+
+
+        }
+
         private async Task handleAddingRecentFile(Models.RecentFileModel file)
         {
             if( await addRecentFile(file) > 0)
@@ -975,5 +982,14 @@ namespace WebPad
                 System.Windows.MessageBox.Show($"Failed to load file from folder browser.  Exception: {ex}", "Failed to load file", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void RecentFileClearAllItemsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            db.Command("delete from RecentFiles");
+            this.Model.RecentFiles.Clear();
+        }
+
+
+
     }
 }

@@ -36,9 +36,22 @@
                             <Setter Property="Command" Value="{Binding Path=OpenRecentFileCommand}" />
                             <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, 
                            AncestorType={x:Type Window}}}" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
+                           AncestorType={x:Type Window}}}" />
+                                        <MenuItem Header="Remove" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </MenuItem.ItemContainerStyle>
-
+                    <MenuItem.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear" Click="RecentFileClearAllItemsMenuItem_Click" />
+                        </ContextMenu>
+                    </MenuItem.ContextMenu>
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.Save" />
                 <MenuItem x:Name="MenuSaveAsWebPad" Header="Save As"></MenuItem>

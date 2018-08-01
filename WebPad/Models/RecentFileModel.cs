@@ -43,6 +43,19 @@ namespace WebPad.Models
         }
 
 
+        public RelayCommand RenameCommand
+        {
+            get
+            {
+                return new RelayCommand((win) =>
+                {
+                    var window = (MainWindow)win;
+                    window.RenameRecentFile(this);
+                });
+            }
+        }
+
+
 
     }
 }

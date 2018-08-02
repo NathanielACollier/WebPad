@@ -5,7 +5,9 @@
         xmlns:localControls="clr-namespace:WebPad.UserControls"
         xmlns:folderBrowser="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;assembly=WebPad.Dependencies.General"
      xmlns:Properties="clr-namespace:WebPad.Properties" 
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         Title="Web Pad" 
+        x:Name="webPadWindow"
         Height="399" 
         Width="654">
 
@@ -28,7 +30,28 @@
             <MenuItem Header="_File">
                 <MenuItem Command="ApplicationCommands.New" />
                 <MenuItem Command="ApplicationCommands.Open" />
-
+                <MenuItem Header="Recent" ItemsSource="{Binding Path=Model.RecentFiles, RelativeSource={RelativeSource FindAncestor, 
+                           AncestorType={x:Type Window}}}">
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="Header" Value="{Binding Path=FileName}" />
+                            <Setter Property="Command" Value="{Binding Path=OpenRecentFileCommand}" />
+                            <Setter Property="ContextMenu">
+                                <Setter.Value>
+                                    <ContextMenu>
+                                        <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" />
+                                        <MenuItem Header="Remove" />
+                                    </ContextMenu>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear" Click="RecentFileClearAllItemsMenuItem_Click" />
+                        </ContextMenu>
+                    </MenuItem.ContextMenu>
+                </MenuItem>
                 <MenuItem Command="ApplicationCommands.Save" />
                 <MenuItem x:Name="MenuSaveAsWebPad" Header="Save As"></MenuItem>
                 <Separator />

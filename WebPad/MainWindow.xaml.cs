@@ -22,7 +22,9 @@ using LogViewer = WebPad.Dependencies.General.WPFUserControls.LogViewer;
 using LocalFolderBrowser = WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;
 
 using WebPad.Dependencies.General.Extensions.WPF;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace WebPad
 {
@@ -91,6 +93,8 @@ namespace WebPad
 
             MenuSaveAsWebPad.Command = CommandSaveAsWebPad;
             CommandBindings.Add(new CommandBinding(CommandSaveAsWebPad, ExecuteSaveAsWebPad));
+
+
             
 
             // window commands
@@ -145,11 +149,42 @@ namespace WebPad
 
         private int newQueryCount = 0;
 
+
+        #region Model DP
+
+        public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(MainWindowModel), typeof(MainWindow));
+
+        public MainWindowModel Model
+        {
+            get { return this.GetValueThreadSafe<MainWindowModel>(ModelProperty); }
+            set { SetValue(ModelProperty, value); }
+        }
+
+        #endregion
+
+        netstandardDbSQLiteHelper.Database db = null;
+
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         public MainWindow()
         {
             InitializeComponent();
+            this.Model = new MainWindowModel();
+            setupFileDatabase();
+
+            populateListOfRecentFiles().ContinueWith((t) =>
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    foreach (var entry in t.Result)
+                    {
+                        AddRecentFileToModel(entry);
+                    }
+                });
+
+            });
+
+
             Log4NetHelpers.CodeConfiguredUtilities.InitializeLog4Net();
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/Resources/Images/globe.ico", UriKind.RelativeOrAbsolute));
 
@@ -169,6 +204,162 @@ namespace WebPad
 
             LoadPreferences(Settings.Default);
         }
+
+
+        private void setupFileDatabase()
+        {
+            this.db = new netstandardDbSQLiteHelper.Database(Properties.Settings.Default.DatabaseFilePath);
+
+            db.Command(@"
+                create table if not exists RecentFiles(
+                    FileName varchar(200) not null,
+                    FullPath varchar(2000) not null,
+                    Type varchar(100) not null
+                )
+            ");
+        }
+
+
+        private File.SaveHandler.SaveType GetRecentFileTypeFromString(string text)
+        {
+            if(string.IsNullOrWhiteSpace(text))
+            {
+                return File.SaveHandler.SaveType.WebPad;
+            }
+
+            return (File.SaveHandler.SaveType)Enum.Parse(typeof(File.SaveHandler.SaveType), text);
+        }
+
+
+        private Task<List<Models.RecentFileModel>> populateListOfRecentFiles()
+        {
+            var p = new TaskCompletionSource<List<Models.RecentFileModel>>();
+
+            var t = new Thread(() =>
+            {
+                var recentEntries = db.Query(@"
+                    select *
+                    from RecentFiles
+                ");
+
+                var files = recentEntries.Select(dict => new Models.RecentFileModel
+                {
+                    FileName = dict["FileName"] as string,
+                    Path = dict["FullPath"] as string,
+                    Type = GetRecentFileTypeFromString(dict["Type"] as string)
+                });
+
+                p.SetResult(files.ToList());
+            });
+
+            t.Start();
+
+
+            return p.Task;
+        }
+
+
+        private void AddRecentFileToModel(Models.RecentFileModel file)
+        {
+            file.OnOpen += (_sender, _args) =>
+            {
+                this.OpenRecentFile(_sender as Models.RecentFileModel);
+            };
+
+            file.OnRename += (_sender, _args) =>
+            {
+                this.RenameRecentFile(_sender as Models.RecentFileModel);
+            };
+
+            this.Model.RecentFiles.Add(file);
+        }
+
+
+
+        public void OpenRecentFile(Models.RecentFileModel file)
+        {
+            SnippetDocumentControl snippet = File.OpenHandler.Open(file.Type, file.Path);
+
+            if ( snippet != null)
+            {
+                AddSnippetTab(snippet);
+            }
+        }
+
+
+        public void RenameRecentFile(Models.RecentFileModel file)
+        {
+            var form = new ncWPFFormsLib.Form()
+                            .TextBoxFor("FileName", file.FileName)
+                            .Display();
+
+            if( !string.Equals(form.Model["FileName"] as string, file.FileName))
+            {
+                db.Command(@"
+                    update RecentFiles
+                    set FileName = :name
+                    where LOWER(FullPath) = :path
+                ", new Dictionary<string, object>
+                {
+                    { ":name", form.Model["FileName"] as string },
+                    {":path", file.Path.ToLower() }
+                });
+                file.FileName = form.Model["FileName"] as string;
+            }
+
+        }
+
+        private async Task handleAddingRecentFile(Models.RecentFileModel file)
+        {
+            if( await addRecentFile(file) > 0)
+            {
+                // it was a new recent file so add it to model
+                AddRecentFileToModel(file);
+            }
+        }
+
+
+        private Task<int> addRecentFile(Models.RecentFileModel file)
+        {
+            var p = new TaskCompletionSource<int>();
+
+            var t = new Thread(() =>
+            {
+
+                var existingEntryResult = db.Query(@"
+                    select *
+                    from RecentFiles
+                    where LOWER(FullPath) = :path
+                ", new Dictionary<string, object>
+                {
+                    {":path", file.Path.ToLower() }
+                });
+
+                if(!existingEntryResult.Any())
+                {
+                    db.Command(@"
+                    insert into RecentFiles(FileName, FullPath, Type)
+                    values(:name, :path, :type)
+                    ", new Dictionary<string, object>
+                    {
+                        {":name", file.FileName },
+                        {":path", file.Path },
+                        {":type", file.Type.ToString() }
+                    });
+                    p.SetResult(1);
+                }
+                else
+                {
+                    p.SetResult(-1);
+                }
+            });
+
+            t.Start();
+
+            return p.Task;
+        }
+
+
 
         private void _resultsRenderer_WebBrowserElementClicked(object _sender, WebBrowserElementClickedEventArgs args)
         {
@@ -623,6 +814,13 @@ namespace WebPad
                 SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad);
                 if (snippet != null)
                 {
+                    handleAddingRecentFile(new Models.RecentFileModel
+                    {
+                        Path = snippet.SaveFilePath,
+                        FileName = snippet.SaveFileName,
+                        Type = File.SaveHandler.SaveType.WebPad
+                    });
+
                     AddSnippetTab(snippet);
                 } else
                 {
@@ -816,5 +1014,14 @@ namespace WebPad
                 System.Windows.MessageBox.Show($"Failed to load file from folder browser.  Exception: {ex}", "Failed to load file", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void RecentFileClearAllItemsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            db.Command("delete from RecentFiles");
+            this.Model.RecentFiles.Clear();
+        }
+
+
+
     }
 }

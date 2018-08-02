@@ -289,7 +289,14 @@ namespace WebPad
 
         public void RenameRecentFile(Models.RecentFileModel file)
         {
+            var form = new ncWPFFormsLib.Form()
+                            .TextBoxFor("FileName", file.FileName)
+                            .Display();
 
+            if( !string.Equals(form.Model["FileName"] as string, file.FileName))
+            {
+                // need to do a rename
+            }
 
         }
 

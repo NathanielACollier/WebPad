@@ -295,7 +295,16 @@ namespace WebPad
 
             if( !string.Equals(form.Model["FileName"] as string, file.FileName))
             {
-                // need to do a rename
+                db.Command(@"
+                    update RecentFiles
+                    set FileName = :name
+                    where LOWER(FullPath) = :path
+                ", new Dictionary<string, object>
+                {
+                    { ":name", form.Model["FileName"] as string },
+                    {":path", file.Path.ToLower() }
+                });
+                file.FileName = form.Model["FileName"] as string;
             }
 
         }

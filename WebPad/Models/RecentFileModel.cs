@@ -11,6 +11,8 @@ namespace WebPad.Models
 {
     public class RecentFileModel : ViewModelBase
     {
+        public event Action<object, EventArgs> OnOpen;
+        public event Action<object, EventArgs> OnRename;
 
         public string FileName
         {
@@ -36,8 +38,7 @@ namespace WebPad.Models
             get {
                 return new RelayCommand(win =>
                 {
-                    var window = (MainWindow)win;
-                    window.OpenRecentFile(this);
+                    this.OnOpen?.Invoke(this, null);
                 });
             }
         }
@@ -49,8 +50,7 @@ namespace WebPad.Models
             {
                 return new RelayCommand((win) =>
                 {
-                    var window = (MainWindow)win;
-                    window.RenameRecentFile(this);
+                    this.OnRename?.Invoke(this, null);
                 });
             }
         }

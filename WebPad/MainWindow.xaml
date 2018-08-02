@@ -5,7 +5,9 @@
         xmlns:localControls="clr-namespace:WebPad.UserControls"
         xmlns:folderBrowser="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;assembly=WebPad.Dependencies.General"
      xmlns:Properties="clr-namespace:WebPad.Properties" 
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         Title="Web Pad" 
+        x:Name="webPadWindow"
         Height="399" 
         Width="654">
 
@@ -34,13 +36,10 @@
                         <Style TargetType="{x:Type MenuItem}">
                             <Setter Property="Header" Value="{Binding Path=FileName}" />
                             <Setter Property="Command" Value="{Binding Path=OpenRecentFileCommand}" />
-                            <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource FindAncestor, 
-                           AncestorType={x:Type Window}}}" />
                             <Setter Property="ContextMenu">
                                 <Setter.Value>
                                     <ContextMenu>
-                                        <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
-                           AncestorType={x:Type Window}}}" />
+                                        <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" />
                                         <MenuItem Header="Remove" />
                                     </ContextMenu>
                                 </Setter.Value>

@@ -178,7 +178,7 @@ namespace WebPad
                 {
                     foreach (var entry in t.Result)
                     {
-                        this.Model.RecentFiles.Add(entry);
+                        AddRecentFileToModel(entry);
                     }
                 });
 
@@ -259,6 +259,22 @@ namespace WebPad
         }
 
 
+        private void AddRecentFileToModel(Models.RecentFileModel file)
+        {
+            file.OnOpen += (_sender, _args) =>
+            {
+                this.OpenRecentFile(_sender as Models.RecentFileModel);
+            };
+
+            file.OnRename += (_sender, _args) =>
+            {
+                this.RenameRecentFile(_sender as Models.RecentFileModel);
+            };
+
+            this.Model.RecentFiles.Add(file);
+        }
+
+
 
         public void OpenRecentFile(Models.RecentFileModel file)
         {
@@ -282,7 +298,7 @@ namespace WebPad
             if( await addRecentFile(file) > 0)
             {
                 // it was a new recent file so add it to model
-                this.Model.RecentFiles.Add(file);
+                AddRecentFileToModel(file);
             }
         }
 

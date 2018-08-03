@@ -69,6 +69,7 @@ namespace WebPad.ChildWindows
                 !string.Equals(model.ExternalHtmlTemplatePath, dialog.FileName, StringComparison.OrdinalIgnoreCase)
                 )
             {
+                model.ExternalHtmlTemplatePath = dialog.FileName;
                 handleAddingRecentSnippetToModel();
                 saveExternalHtmlSetting();
             }

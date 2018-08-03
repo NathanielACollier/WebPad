@@ -34,10 +34,12 @@ namespace WebPad.Utilities
                     Type varchar(100) not null
                 )
             ");
+            //__internalDatabaseRef.Command(@"drop table HtmlSnippets");
             __internalDatabaseRef.Command(@"
                 create table if not exists HtmlSnippets(
                     BaseFilePath varchar(2000) not null,
-                    FilePath varchar(2000) not null
+                    FilePath varchar(2000) not null,
+                    FileName varchar(2000) not null
                 )
             ");
         }
@@ -69,6 +71,24 @@ namespace WebPad.Utilities
             });
 
             return files;
+        }
+
+
+        public static IEnumerable<Models.RecentHtmlSnippet> GetAllRecentHtmlSnippets()
+        {
+            var entries = db.Query(@"
+                select *
+                from HtmlSnippets
+            ");
+
+            var snippets = entries.Select(dict => new Models.RecentHtmlSnippet
+            {
+                BaseFilePath = dict["BaseFilePath"] as string,
+                FilePath = dict["FilePath"] as string,
+                FileName = dict["FileName"] as string
+            });
+
+            return snippets;
         }
 
 
@@ -111,6 +131,41 @@ namespace WebPad.Utilities
                         {":path", file.Path },
                         {":type", file.Type.ToString() }
                     });
+                didAdd = true;
+            }
+
+            return didAdd;
+        }
+
+
+
+
+        public static bool AddRecentHtmlSnippetIfNotDuplicate(Models.RecentHtmlSnippet snippet)
+        {
+            bool didAdd = false;
+
+            var existingEntry = db.Query(@"
+                select *
+                from HtmlSnippets
+                where LOWER(baseFilePath) = :base AND
+                        LOWER(FilePath) = :path
+            ", new Dictionary<string, object>
+            {
+                {":base", snippet.BaseFilePath },
+                {":path", snippet.FilePath }
+            });
+
+            if(!existingEntry.Any())
+            {
+                db.Command(@"
+                    insert into HtmlSnippets(baseFilePath, filePath, FileName)
+                    values(:base,:path,:name)
+                ", new Dictionary<string, object>
+                {
+                    {":base", snippet.BaseFilePath },
+                    {":path", snippet.FilePath },
+                    {":name", snippet.FileName }
+                });
                 didAdd = true;
             }
 

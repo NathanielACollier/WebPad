@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,11 +30,15 @@ namespace WebPad.ChildWindows
             context.ExternalHtmlTemplatePath = _docControl.ExternalHtmlPath;
             context.BaseHref = _docControl.BaseHref;
 
-            context.RecentSnippets.Add(new Models.RecentHtmlSnippet
+            populateListOfRecentHtmlSnippets().ContinueWith((t) =>
             {
-                BaseFilePath = "Duck Duck Goose",
-                FilePath = "Goose",
-                FileName = "Hello World"
+                this.Dispatcher.Invoke(() =>
+                {
+                    foreach( var entry in t.Result)
+                    {
+                        AddRecentHtmlSnippetSnippetToModel(entry);
+                    }
+                });
             });
         }
 
@@ -46,9 +51,38 @@ namespace WebPad.ChildWindows
             {
 
                 saveExternalHtmlSetting();
+                handleAddingRecentSnippetToModel();
             }
             // end of file picker filepath changed
         }
+
+
+        private Task<List<Models.RecentHtmlSnippet>> populateListOfRecentHtmlSnippets()
+        {
+            var p = new TaskCompletionSource<List<Models.RecentHtmlSnippet>>();
+
+            var t = new Thread(() =>
+            {
+                var snippets = Utilities.DBManager.GetAllRecentHtmlSnippets();
+
+                p.SetResult(snippets.ToList());
+            });
+
+            t.Start();
+
+            return p.Task;
+        }
+
+
+        private void AddRecentHtmlSnippetSnippetToModel(Models.RecentHtmlSnippet snippet)
+        {
+            var model = this.DataContext as EditSnippetOptionsWindowModel;
+
+            // setup events if any
+            
+            model.RecentSnippets.Add(snippet);
+        }
+
 
 
         private void saveExternalHtmlSetting()
@@ -70,6 +104,47 @@ namespace WebPad.ChildWindows
 
             }
         }
+
+
+        private async Task handleAddingRecentSnippetToModel()
+        {
+            var model = this.DataContext as EditSnippetOptionsWindowModel;
+
+            var s = new Models.RecentHtmlSnippet
+            {
+                BaseFilePath = this.DocumentControl.SaveFilePath,
+                FilePath = model.ExternalHtmlTemplatePath,
+                FileName = System.IO.Path.GetFileName(model.ExternalHtmlTemplatePath)
+            };
+
+            if( await addRecentHtmlSnippet(s) > 0)
+            {
+                AddRecentHtmlSnippetSnippetToModel(s);
+            }
+        }
+
+
+        private Task<int> addRecentHtmlSnippet(Models.RecentHtmlSnippet s)
+        {
+            var p = new TaskCompletionSource<int>();
+
+            var t = new Thread(() =>
+            {
+                if(Utilities.DBManager.AddRecentHtmlSnippetIfNotDuplicate(s))
+                {
+                    p.SetResult(1);
+                }else
+                {
+                    p.SetResult(-1);
+                }
+            });
+
+            t.Start();
+
+            return p.Task;
+        }
+
+
 
         private void BaseHrefTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

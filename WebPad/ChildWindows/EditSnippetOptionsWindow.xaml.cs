@@ -49,9 +49,9 @@ namespace WebPad.ChildWindows
             // make sure window is initialized
             if( this.DocumentControl != null)
             {
-
-                saveExternalHtmlSetting();
                 handleAddingRecentSnippetToModel();
+                saveExternalHtmlSetting();
+                
             }
             // end of file picker filepath changed
         }
@@ -79,6 +79,11 @@ namespace WebPad.ChildWindows
             var model = this.DataContext as EditSnippetOptionsWindowModel;
 
             // setup events if any
+            snippet.OnOpen += (_s, _args) =>
+            {
+                model.ExternalHtmlTemplatePath = snippet.FilePath;
+                saveExternalHtmlSetting();
+            };
             
             model.RecentSnippets.Add(snippet);
         }
@@ -104,6 +109,10 @@ namespace WebPad.ChildWindows
 
             }
         }
+
+
+
+
 
 
         private async Task handleAddingRecentSnippetToModel()

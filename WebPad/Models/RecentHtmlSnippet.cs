@@ -10,6 +10,8 @@ namespace WebPad.Models
     public class RecentHtmlSnippet : ViewModelBase
     {
 
+        public event Action<object, EventArgs> OnOpen;
+
         public string BaseFilePath
         {
             get { return GetValue(() => this.BaseFilePath); }
@@ -36,7 +38,7 @@ namespace WebPad.Models
             {
                 return new RelayCommand((param) =>
                 {
-                    // fire off event that open happened
+                    this.OnOpen?.Invoke(this, null);
                 });
             }
         }

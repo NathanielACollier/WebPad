@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ncControls="clr-namespace:WebPad.Dependencies.General.WPFUserControls;assembly=WebPad.Dependencies.General"
         xmlns:local="clr-namespace:WebPad.ChildWindows"
         mc:Ignorable="d"
         Title="EditSnippetOptionsWindow" Height="300" Width="300">
@@ -13,8 +12,8 @@
     <DockPanel LastChildFill="False" ScrollViewer.VerticalScrollBarVisibility="Visible">
         <DockPanel DockPanel.Dock="Top">
             <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path"></TextBlock>
-            <ncControls:FilePicker Margin="10,0,0,0" DockPanel.Dock="Left" FilePath="{Binding Path=ExternalHtmlTemplatePath, Mode=TwoWay}" FilePathChanged="ExternalHtmlTemplatePathFilePicker_FilePathChanged">
-                <ncControls:FilePicker.ContextMenu>
+            <Button Content="..." FontWeight="Bold" DockPanel.Dock="Left" Click="OpenOrChangeFileButton_Click">
+                <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="RecentFiles" ItemsSource="{Binding Path=RecentSnippets}">
                             <MenuItem.ItemContainerStyle>
@@ -33,14 +32,9 @@
                             </MenuItem.ItemContainerStyle>
                         </MenuItem>
                     </ContextMenu>
-                </ncControls:FilePicker.ContextMenu>
-            </ncControls:FilePicker>
-        </DockPanel>
-
-        <DockPanel DockPanel.Dock="Top">
-            <!-- display the exact model value so we can see it-->
-            <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path:  "></TextBlock>
-            <TextBlock DockPanel.Dock="Left" Text="{Binding Path=ExternalHtmlTemplatePath}"></TextBlock>
+                </Button.ContextMenu>
+            </Button>
+            <TextBox DockPanel.Dock="Left" Text="{Binding Path=ExternalHtmlTemplatePath}"></TextBox>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Top">

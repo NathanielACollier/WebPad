@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,7 @@ namespace WebPad.ChildWindows
             InitializeComponent();
             this.DocumentControl = _docControl; // keep a reference to this
             var context = this.DataContext as EditSnippetOptionsWindowModel;
-            context.ExternalHtmlTemplatePath = _docControl.ExternalHtmlPath;
+            setExternalHtmlPathFromRelativePath(_docControl.ExternalHtmlPath);
             context.BaseHref = _docControl.BaseHref;
 
             populateListOfRecentHtmlSnippets().ContinueWith((t) =>
@@ -44,16 +45,33 @@ namespace WebPad.ChildWindows
 
         public WebPad.UserControls.SnippetDocumentControl DocumentControl { get; set; }
 
-        private void ExternalHtmlTemplatePathFilePicker_FilePathChanged(object sender, EventArgs e)
+
+        private void setExternalHtmlPathFromRelativePath( string relativePath)
         {
-            // make sure window is initialized
-            if( this.DocumentControl != null)
+            var model = this.DataContext as EditSnippetOptionsWindowModel;
+            var absolute = Utilities.PathUtilities.MakeAbsolutePath(full: this.DocumentControl.SaveFilePath, relative: this.DocumentControl.ExternalHtmlPath);
+
+            model.ExternalHtmlTemplatePath = absolute;
+        }
+
+
+        private void OpenOrChangeFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var model = this.DataContext as EditSnippetOptionsWindowModel;
+            var dialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                DefaultExt = "html",
+                Filter = "HTML (*.html)|*.html"
+            };
+
+            if(dialog.ShowDialog()==true &&
+                !string.Equals(model.ExternalHtmlTemplatePath, dialog.FileName, StringComparison.OrdinalIgnoreCase)
+                )
             {
                 handleAddingRecentSnippetToModel();
                 saveExternalHtmlSetting();
-                
             }
-            // end of file picker filepath changed
         }
 
 
@@ -99,7 +117,6 @@ namespace WebPad.ChildWindows
                 {
                     this.DocumentControl.ExternalHtmlPath = Utilities.PathUtilities.MakeRelativePath(this.DocumentControl.SaveFilePath, context.ExternalHtmlTemplatePath);
 
-                    var absolute = Utilities.PathUtilities.MakeAbsolutePath(full: this.DocumentControl.SaveFilePath, relative: this.DocumentControl.ExternalHtmlPath);
                     this.DocumentControl.Html = System.IO.File.ReadAllText(context.ExternalHtmlTemplatePath);
                 }
                 else
@@ -182,5 +199,7 @@ namespace WebPad.ChildWindows
                 saveExternalHtmlSetting();
             }
         }
+
+
     }
 }

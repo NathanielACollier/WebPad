@@ -94,10 +94,9 @@ namespace WebPad.File
         }
 
 
-        public static SnippetDocumentControl Open(SaveHandler.SaveType type)
+        public static SnippetDocumentControl Open(SnippetDocumentControl currentDoc, SaveHandler.SaveType type)
         {
             OpenFileDialog dialog = null;
-            
 
             if (type == SaveHandler.SaveType.HTML)
             {
@@ -106,6 +105,13 @@ namespace WebPad.File
             else if (type == SaveHandler.SaveType.WebPad)
             {
                 dialog = CreateOpenWebPadDialog();
+            }
+
+            // set initial folder to be where our current file is, if we have one
+            if (System.IO.File.Exists(currentDoc.SaveFilePath))
+            {
+                var folderPath = System.IO.Path.GetDirectoryName(currentDoc.SaveFilePath);
+                dialog.InitialDirectory = folderPath;
             }
 
             if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)

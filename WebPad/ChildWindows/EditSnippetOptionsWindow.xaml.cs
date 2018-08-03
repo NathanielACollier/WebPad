@@ -65,6 +65,12 @@ namespace WebPad.ChildWindows
                 Filter = "HTML (*.html)|*.html"
             };
 
+            if(System.IO.File.Exists(model.ExternalHtmlTemplatePath))
+            {
+                var folderPath = System.IO.Path.GetDirectoryName(model.ExternalHtmlTemplatePath);
+                dialog.InitialDirectory = folderPath;
+            }
+
             if(dialog.ShowDialog()==true &&
                 !string.Equals(model.ExternalHtmlTemplatePath, dialog.FileName, StringComparison.OrdinalIgnoreCase)
                 )

@@ -752,7 +752,10 @@ namespace WebPad
             try
             {
 
-                SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad);
+                // determine if we have a file open already
+                var currentDoc = GetSelectedTabSnippetDocumentControl();
+
+                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.WebPad);
                 if (snippet != null)
                 {
                     handleAddingRecentFile(new Models.RecentFileModel
@@ -783,7 +786,10 @@ namespace WebPad
 
             try
             {
-                SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.HTML);
+                // determine if we have a file open already
+                var currentDoc = GetSelectedTabSnippetDocumentControl();
+
+                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.HTML);
 
                 if (snippet != null)
                 {

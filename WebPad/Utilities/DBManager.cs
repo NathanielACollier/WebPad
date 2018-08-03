@@ -151,8 +151,8 @@ namespace WebPad.Utilities
                         LOWER(FilePath) = :path
             ", new Dictionary<string, object>
             {
-                {":base", snippet.BaseFilePath },
-                {":path", snippet.FilePath }
+                {":base", snippet.BaseFilePath.ToLower() },
+                {":path", snippet.FilePath.ToLower() }
             });
 
             if(!existingEntry.Any())

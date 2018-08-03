@@ -84,13 +84,22 @@ namespace WebPad.ChildWindows
 
         private Task<List<Models.RecentHtmlSnippet>> populateListOfRecentHtmlSnippets()
         {
+            string basePath = this.DocumentControl.SaveFilePath;
             var p = new TaskCompletionSource<List<Models.RecentHtmlSnippet>>();
 
             var t = new Thread(() =>
             {
-                var snippets = Utilities.DBManager.GetAllRecentHtmlSnippets();
+                if(string.IsNullOrWhiteSpace(basePath))
+                {
+                    var snippets = Utilities.DBManager.GetAllRecentHtmlSnippets();
 
-                p.SetResult(snippets.ToList());
+                    p.SetResult(snippets.ToList());
+                }else
+                {
+                    var snippets = Utilities.DBManager.GetAllRecentHTMLSnippetsForBasePath(basePath);
+                    p.SetResult(snippets.ToList());
+                }
+
             });
 
             t.Start();

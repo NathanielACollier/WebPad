@@ -81,14 +81,32 @@ namespace WebPad.Utilities
                 from HtmlSnippets
             ");
 
-            var snippets = entries.Select(dict => new Models.RecentHtmlSnippet
+            return entries.Select(dict => RecentHtmlSnippetRowToModel(dict));
+        }
+
+        private static Models.RecentHtmlSnippet RecentHtmlSnippetRowToModel(Dictionary<string,object> dict)
+        {
+            return new Models.RecentHtmlSnippet
             {
                 BaseFilePath = dict["BaseFilePath"] as string,
                 FilePath = dict["FilePath"] as string,
                 FileName = dict["FileName"] as string
+            };
+        }
+
+
+        public static IEnumerable<Models.RecentHtmlSnippet> GetAllRecentHTMLSnippetsForBasePath(string basePath)
+        {
+            var entries = db.Query(@"
+                select *
+                from HtmlSnippets
+                where LOWER(BaseFilePath) = :base
+            ", new Dictionary<string, object>
+            {
+                {":base", basePath.ToLower() }
             });
 
-            return snippets;
+            return entries.Select(dict => RecentHtmlSnippetRowToModel(dict));
         }
 
 

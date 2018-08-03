@@ -28,6 +28,13 @@ namespace WebPad.ChildWindows
             var context = this.DataContext as EditSnippetOptionsWindowModel;
             context.ExternalHtmlTemplatePath = _docControl.ExternalHtmlPath;
             context.BaseHref = _docControl.BaseHref;
+
+            context.RecentSnippets.Add(new Models.RecentHtmlSnippet
+            {
+                BaseFilePath = "Duck Duck Goose",
+                FilePath = "Goose",
+                FileName = "Hello World"
+            });
         }
 
         public WebPad.UserControls.SnippetDocumentControl DocumentControl { get; set; }

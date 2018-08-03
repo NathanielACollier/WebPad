@@ -151,6 +151,7 @@
     <Compile Include="ChildWindows\EditSnippetOptionsWindowModel.cs" />
     <Compile Include="MainWindowModel.cs" />
     <Compile Include="Models\RecentFileModel.cs" />
+    <Compile Include="Models\RecentHtmlSnippet.cs" />
     <Compile Include="Rendering\DHTMLEvent.cs" />
     <Compile Include="Rendering\HtmlInjectLineNumberAnchors.cs" />
     <Compile Include="Rendering\WebBrowserElementClickedEventArgs.cs" />

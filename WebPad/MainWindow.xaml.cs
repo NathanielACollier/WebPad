@@ -217,6 +217,12 @@ namespace WebPad
                     Type varchar(100) not null
                 )
             ");
+            db.Command(@"
+                create table if not exists HtmlSnippets(
+                    BaseFilePath varchar(2000) not null,
+                    FilePath varchar(2000) not null
+                )
+            ");
         }
 
 

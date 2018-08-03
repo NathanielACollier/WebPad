@@ -13,7 +13,28 @@
     <DockPanel LastChildFill="False" ScrollViewer.VerticalScrollBarVisibility="Visible">
         <DockPanel DockPanel.Dock="Top">
             <TextBlock DockPanel.Dock="Left" Text="External HTML Template Path"></TextBlock>
-            <ncControls:FilePicker Margin="10,0,0,0" DockPanel.Dock="Left" FilePath="{Binding Path=ExternalHtmlTemplatePath, Mode=TwoWay}" FilePathChanged="ExternalHtmlTemplatePathFilePicker_FilePathChanged"></ncControls:FilePicker>
+            <ncControls:FilePicker Margin="10,0,0,0" DockPanel.Dock="Left" FilePath="{Binding Path=ExternalHtmlTemplatePath, Mode=TwoWay}" FilePathChanged="ExternalHtmlTemplatePathFilePicker_FilePathChanged">
+                <ncControls:FilePicker.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="RecentFiles" ItemsSource="{Binding Path=RecentSnippets}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="{x:Type MenuItem}">
+                                    <Setter Property="Header" Value="{Binding Path=FileName}" />
+                                    <Setter Property="Command" Value="{Binding Path=OpenCommand}" />
+                                    <Setter Property="ContextMenu">
+                                        <Setter.Value>
+                                            <ContextMenu>
+                                                <MenuItem Header="Rename" />
+                                                <MenuItem Header="Remove" />
+                                            </ContextMenu>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
+                    </ContextMenu>
+                </ncControls:FilePicker.ContextMenu>
+            </ncControls:FilePicker>
         </DockPanel>
 
         <DockPanel DockPanel.Dock="Top">

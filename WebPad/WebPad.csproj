@@ -156,6 +156,7 @@
     <Compile Include="Rendering\HtmlInjectLineNumberAnchors.cs" />
     <Compile Include="Rendering\WebBrowserElementClickedEventArgs.cs" />
     <Compile Include="UserControls\HtmlEditorCaretPositionChangeEventArgs.cs" />
+    <Compile Include="Utilities\DBManager.cs" />
     <Compile Include="Utilities\PathUtilities.cs" />
     <Compile Include="Utilities\WebBrowserUtil.cs" />
     <Compile Include="Utilities\XmlSerialization.cs" />

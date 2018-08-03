@@ -170,7 +170,6 @@ namespace WebPad
         {
             InitializeComponent();
             this.Model = new MainWindowModel();
-            setupFileDatabase();
 
             populateListOfRecentFiles().ContinueWith((t) =>
             {
@@ -206,29 +205,8 @@ namespace WebPad
         }
 
 
-        private void setupFileDatabase()
-        {
-            this.db = new netstandardDbSQLiteHelper.Database(Properties.Settings.Default.DatabaseFilePath);
-
-            db.Command(@"
-                create table if not exists RecentFiles(
-                    FileName varchar(200) not null,
-                    FullPath varchar(2000) not null,
-                    Type varchar(100) not null
-                )
-            ");
-        }
 
 
-        private File.SaveHandler.SaveType GetRecentFileTypeFromString(string text)
-        {
-            if(string.IsNullOrWhiteSpace(text))
-            {
-                return File.SaveHandler.SaveType.WebPad;
-            }
-
-            return (File.SaveHandler.SaveType)Enum.Parse(typeof(File.SaveHandler.SaveType), text);
-        }
 
 
         private Task<List<Models.RecentFileModel>> populateListOfRecentFiles()
@@ -237,17 +215,7 @@ namespace WebPad
 
             var t = new Thread(() =>
             {
-                var recentEntries = db.Query(@"
-                    select *
-                    from RecentFiles
-                ");
-
-                var files = recentEntries.Select(dict => new Models.RecentFileModel
-                {
-                    FileName = dict["FileName"] as string,
-                    Path = dict["FullPath"] as string,
-                    Type = GetRecentFileTypeFromString(dict["Type"] as string)
-                });
+                var files = Utilities.DBManager.GetAllRecentFiles();
 
                 p.SetResult(files.ToList());
             });
@@ -295,15 +263,7 @@ namespace WebPad
 
             if( !string.Equals(form.Model["FileName"] as string, file.FileName))
             {
-                db.Command(@"
-                    update RecentFiles
-                    set FileName = :name
-                    where LOWER(FullPath) = :path
-                ", new Dictionary<string, object>
-                {
-                    { ":name", form.Model["FileName"] as string },
-                    {":path", file.Path.ToLower() }
-                });
+                Utilities.DBManager.RenameRecentFile(file, form.Model["FileName"] as string);
                 file.FileName = form.Model["FileName"] as string;
             }
 
@@ -326,29 +286,10 @@ namespace WebPad
             var t = new Thread(() =>
             {
 
-                var existingEntryResult = db.Query(@"
-                    select *
-                    from RecentFiles
-                    where LOWER(FullPath) = :path
-                ", new Dictionary<string, object>
+                if(Utilities.DBManager.AddRecentFileIfNotDuplicate(file))
                 {
-                    {":path", file.Path.ToLower() }
-                });
-
-                if(!existingEntryResult.Any())
-                {
-                    db.Command(@"
-                    insert into RecentFiles(FileName, FullPath, Type)
-                    values(:name, :path, :type)
-                    ", new Dictionary<string, object>
-                    {
-                        {":name", file.FileName },
-                        {":path", file.Path },
-                        {":type", file.Type.ToString() }
-                    });
                     p.SetResult(1);
-                }
-                else
+                }else
                 {
                     p.SetResult(-1);
                 }
@@ -811,7 +752,10 @@ namespace WebPad
             try
             {
 
-                SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad);
+                // determine if we have a file open already
+                var currentDoc = GetSelectedTabSnippetDocumentControl();
+
+                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.WebPad);
                 if (snippet != null)
                 {
                     handleAddingRecentFile(new Models.RecentFileModel
@@ -842,7 +786,10 @@ namespace WebPad
 
             try
             {
-                SnippetDocumentControl snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.HTML);
+                // determine if we have a file open already
+                var currentDoc = GetSelectedTabSnippetDocumentControl();
+
+                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.HTML);
 
                 if (snippet != null)
                 {

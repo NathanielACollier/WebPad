@@ -82,9 +82,6 @@
     </Compile>
     <Compile Include="Utilities\FileSystemShortcutHandler.cs" />
     <Compile Include="Utilities\WPFWindowsFormsIntegrationUtil.cs" />
-    <Compile Include="WPFUserControls\FilePicker.xaml.cs">
-      <DependentUpon>FilePicker.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WPFUserControls\LocalFolderBrowser\FileModel.cs" />
     <Compile Include="WPFUserControls\LocalFolderBrowser\FileSelectedEventArgs.cs" />
     <Compile Include="WPFUserControls\LocalFolderBrowser\FileSystemNodeModel.cs" />
@@ -125,10 +122,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="WPFUserControls\FilePicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="WPFUserControls\LocalFolderBrowser\LocalFolderBrowser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

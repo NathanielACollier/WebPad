@@ -48,6 +48,14 @@ namespace WebPad.ChildWindows
 
         private void setExternalHtmlPathFromRelativePath( string relativePath)
         {
+            if( string.IsNullOrWhiteSpace(relativePath) ||
+                string.IsNullOrWhiteSpace(this.DocumentControl.SaveFilePath))
+            {
+                log.Error("RelativePath or SaveFilePath is null or empty");
+                return;
+            }
+
+
             var model = this.DataContext as EditSnippetOptionsWindowModel;
             var absolute = Utilities.PathUtilities.MakeAbsolutePath(full: this.DocumentControl.SaveFilePath, relative: this.DocumentControl.ExternalHtmlPath);
 

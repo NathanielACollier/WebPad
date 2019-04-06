@@ -13,6 +13,12 @@ namespace WebPad.Rendering
 
         public static string GetDocumentText(UserControls.SnippetDocumentControl snippetDocControl)
         {
+            string baseHref = snippetDocControl.BaseHref;
+            if(!string.IsNullOrWhiteSpace(snippetDocControl.SaveFilePath))
+            {
+                baseHref = "/"; // root, because we are going to dynamically determine where the files should come from
+            }
+
             return _basePageHtml.AsTemplated(new
             {
                 //References = snippetDocControl.References.GetHtml(),
@@ -24,7 +30,7 @@ namespace WebPad.Rendering
                 Html = HtmlInjectLineNumberAnchors.Inject(snippetDocControl.Html),
                 CSS = snippetDocControl.CSS,
                 PageTitle = snippetDocControl.SaveFileName,
-                BaseHref = string.IsNullOrWhiteSpace(snippetDocControl.BaseHref) ? "/" : snippetDocControl.BaseHref
+                BaseHref = baseHref
             });
         }
     }

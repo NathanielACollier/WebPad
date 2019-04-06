@@ -102,7 +102,7 @@ namespace WebPad.WebServer
                                 {
                                     baseDirectory = Utilities.PathUtilities.MakeAbsolutePath(baseDirectory, this.control.BaseHref);
                                 }
-
+                                log.Info($"Base Directory: {baseDirectory}");
                                 // serve the image???
                                 string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\')
                                                                             .Replace("~", "\\");
@@ -128,12 +128,16 @@ namespace WebPad.WebServer
                                         // binary octet stream
                                         WriteBinaryResponse(response, "application/octet-stream", System.IO.File.ReadAllBytes(filePath));
                                     }
+                                }else
+                                {
+                                    log.Warn($"File Not Found: {filePath}");
+                                    WriteTextResponse(response, "application/text", $"ERROR - No File Found at url [{request.Url.LocalPath}]");
                                 }
 
                                 
                             }
 
-                            WriteTextResponse(response, "application/text", "ERROR - No File Found");
+                            
                         }
 
                     }, this.Url);

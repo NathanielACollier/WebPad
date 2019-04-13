@@ -82,10 +82,10 @@
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.1.0\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="ncWPFBusyControlLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ncWPFFormsLib.1.0.6788.18222\lib\net461\ncWPFBusyControlLib.dll</HintPath>
+      <HintPath>..\packages\ncWPFFormsLib.1.0.7042.24013\lib\net461\ncWPFBusyControlLib.dll</HintPath>
     </Reference>
-    <Reference Include="ncWPFFormsLib, Version=1.0.6788.18222, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ncWPFFormsLib.1.0.6788.18222\lib\net461\ncWPFFormsLib.dll</HintPath>
+    <Reference Include="ncWPFFormsLib, Version=1.0.7042.24013, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ncWPFFormsLib.1.0.7042.24013\lib\net461\ncWPFFormsLib.dll</HintPath>
     </Reference>
     <Reference Include="netstandardDbSQLiteHelper, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\netstandardDbSQLiteHelper.1.0.0.1\lib\netstandard2.0\netstandardDbSQLiteHelper.dll</HintPath>
@@ -136,6 +136,9 @@
     </Reference>
     <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\net35\WPFToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="ZetaLongPaths, Version=1.0.0.28, Culture=neutral, PublicKeyToken=b764f59068f31f38, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZetaLongPaths.1.0.0.28\lib\net452-full\ZetaLongPaths.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

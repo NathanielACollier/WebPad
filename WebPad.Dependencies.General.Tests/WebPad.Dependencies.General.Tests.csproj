@@ -54,13 +54,13 @@
     <Compile Include="WPFUserControls\LocalFolderBrowser\UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\WebPad.Dependencies.General\WebPad.Dependencies.General.csproj">
       <Project>{4abb6100-6b14-4eba-a338-2f158fe9ac06}</Project>
       <Name>WebPad.Dependencies.General</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

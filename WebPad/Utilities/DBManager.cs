@@ -8,9 +8,9 @@ namespace WebPad.Utilities
 {
     public static class DBManager
     {
-        private static netstandardDbSQLiteHelper.Database __internalDatabaseRef;
+        private static nac.Database.SQLite.Database __internalDatabaseRef;
 
-        public static netstandardDbSQLiteHelper.Database db
+        public static nac.Database.SQLite.Database db
         {
             get
             {
@@ -25,7 +25,7 @@ namespace WebPad.Utilities
 
         private static void setupDatabase()
         {
-            __internalDatabaseRef = new netstandardDbSQLiteHelper.Database(Properties.Settings.Default.DatabaseFilePath);
+            __internalDatabaseRef = new nac.Database.SQLite.Database(Properties.Settings.Default.DatabaseFilePath);
 
             __internalDatabaseRef.Command(@"
                 create table if not exists RecentFiles(

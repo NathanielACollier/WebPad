@@ -1,7 +1,8 @@
 ﻿using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
-using System.Data;// DataTable
+using System.Data;
+using System.IO; // DataTable
 using System.Linq;
 using System.Text;
 
@@ -10,24 +11,21 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
     public static class ExcelDataTableUtility
     {
-        /// <summary>
+                /// <summary>
         /// Original code from: http://stackoverflow.com/questions/13669733/export-datatable-to-excel-with-epplus
         /// </summary>
         /// <param name="filePath"></param>
-        public static void SaveDataTableToExcel(string filePath, DataTable table, bool printHeader = false, string worksheetName = "data")
+        public static void SaveDataTableToExcel(string filePath, DataTable table, bool printHeader = false, string worksheetName = "data" )
         {
-            var fileInfo = new ZetaLongPaths.ZlpFileInfo(filePath);
-            var handle = fileInfo.CreateHandle(ZetaLongPaths.Native.CreationDisposition.CreateAlways, ZetaLongPaths.Native.FileAccess.GenericAll, ZetaLongPaths.Native.FileShare.Delete);
-
-            using (var fs = new System.IO.FileStream(handle, System.IO.FileAccess.Write))
+            using (var fs = new System.IO.FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Delete))
             {
                 SaveDataTableToExcel(fs, table, printHeader, worksheetName);
             }
         }
 
-        public static byte[] SaveDataTableToExcel(DataTable table, bool printHeader = false, string worksheetName = "data")
+        public static byte[] SaveDataTableToExcel(DataTable table, bool printHeader = false, string worksheetName = "data" )
         {
-            using (var ms = new System.IO.MemoryStream())
+            using( var ms = new System.IO.MemoryStream() )
             {
                 SaveDataTableToExcel(ms, table, printHeader, worksheetName);
 
@@ -37,9 +35,11 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
         public static void SaveDataTableToExcel(System.IO.Stream destinationStream, DataTable table, bool printHeader = false, string worksheetName = "data")
         {
+            lib.global.setup();
+            
             using (ExcelPackage pkg = new ExcelPackage(destinationStream))
             {
-                ExcelWorksheet ws = pkg.Workbook.Worksheets.Add(worksheetName);
+                ExcelWorksheet ws = ExcelUtility.GetOrAddWorksehet(pkg, worksheetName);
 
                 ws.Cells["A1"].LoadFromDataTable(table, printHeader);
 
@@ -47,24 +47,55 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
             }
         }
 
+        
+
+
+        public static byte[] SaveDataTableToExcelTable(byte[] excelData, DataTable table, bool printHeader = false, string worksheetName = "data")
+        {
+            lib.global.setup();
+            
+            using (var ms = new System.IO.MemoryStream(excelData))
+            {
+                using( ExcelPackage pkg = new ExcelPackage(ms))
+                {
+                    // if the worksheet exists delete it
+                    ExcelUtility.DeleteWorksheet(pkg, worksheetName);
+                    ExcelWorksheet ws = ExcelUtility.GetOrAddWorksehet(pkg, worksheetName);
+
+                    ws.Cells["A1"].LoadFromDataTable(table, printHeader);
+                    if( table.Rows.Count < 1)
+                    {
+                        throw new Exception("Cannot write empty DataTable to excel");
+                    }
+                    //var tableRange = ws.Cells[1, 1, table.Rows.Count + 1, table.Columns.Count];
+                    ws.Tables.Add(ws.Dimension, $"table{Guid.NewGuid().ToString("N")}");
+
+                    // auto fit all the columns
+                    ws.Cells[ws.Dimension.Address].AutoFitColumns();
+
+                    using (var outMS = new System.IO.MemoryStream())
+                    {
+                        pkg.SaveAs(outMS);
+                        return outMS.ToArray();
+                    }
+                }
+            }
+        }
+
         private static System.IO.FileStream CreateReadOnlyFileStream(string filePath)
         {
-            var fileInfo = new ZetaLongPaths.ZlpFileInfo(filePath);
-            var handle = fileInfo.CreateHandle(ZetaLongPaths.Native.CreationDisposition.OpenExisting,
-                                            ZetaLongPaths.Native.FileAccess.GenericRead,
-                                            ZetaLongPaths.Native.FileShare.Read);
-
-            return new System.IO.FileStream(handle, System.IO.FileAccess.Read);
+            var fs = new System.IO.FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return fs;
         }
 
 
-        public static DataTable TransformWorksheetToDataTable(string excelFilePath,
+        public static DataTable TransformWorksheetToDataTable(string excelFilePath,  
                                                  string worksheetName,
                                                 bool firstRowIsHeader = false,
                                                 Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
 
-            using (var stream = CreateReadOnlyFileStream(excelFilePath))
+            using (var stream = CreateReadOnlyFileStream(excelFilePath) )
             {
                 DataTable table = TransformWorksheetToDataTable(stream, worksheetName, firstRowIsHeader, columnType);
 
@@ -73,7 +104,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
         }
 
         public static DataTable TransformWorksheetToDataTable(string excelFilePath,
-                                         int worksheetPosition = 1, // workbook positions start at 1
+                                         int worksheetPosition = 0,
                                         bool firstRowIsHeader = false,
                                             Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
@@ -85,11 +116,12 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
             }
         }
 
-        public static DataTable TransformWorksheetToDataTable(System.IO.Stream excelSpreadsheetStream,
-                                                                            int worksheetPosition = 1,
-                                                                            bool firstRowIsHeader = false,
+        public static DataTable TransformWorksheetToDataTable( System.IO.Stream excelSpreadsheetStream, 
+                                                                            int worksheetPosition = 0, 
+                                                                            bool firstRowIsHeader=false,
                                                                             Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
+            lib.global.setup();
             using (OfficeOpenXml.ExcelPackage pkg = new OfficeOpenXml.ExcelPackage(excelSpreadsheetStream))
             {
                 DataTable table = TransformWorksheetToDataTable(pkg, worksheetPosition, firstRowIsHeader, columnType);
@@ -107,11 +139,11 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
         /// <param name="columnType"></param>
         /// <returns></returns>
         public static DataTable TransformWorksheetToDataTable(byte[] excelFileData,
-                                                                    int worksheetPosition = 1,
+                                                                    int worksheetPosition = 0,
                                                                     bool firstRowIsHeader = false,
                                                                     Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
-            using (var ms = new System.IO.MemoryStream(excelFileData))
+            using( var ms = new System.IO.MemoryStream(excelFileData))
             {
                 return TransformWorksheetToDataTable(ms, worksheetPosition, firstRowIsHeader, columnType);
             }
@@ -119,7 +151,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
         public static DataTable TransformWorksheetToDataTable(byte[] excelFileData, string worksheetName, bool firstRowIsHeader = false, Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
-            using (var ms = new System.IO.MemoryStream(excelFileData))
+            using( var ms = new System.IO.MemoryStream(excelFileData))
             {
                 return TransformWorksheetToDataTable(ms, worksheetName: worksheetName, firstRowIsHeader: firstRowIsHeader, columnType: columnType);
             }
@@ -127,6 +159,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
         public static DataTable TransformWorksheetToDataTable(System.IO.Stream excelSpreadsheetStream, string worksheetName, bool firstRowIsHeader = false, Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
+            lib.global.setup();
             using (OfficeOpenXml.ExcelPackage pkg = new OfficeOpenXml.ExcelPackage(excelSpreadsheetStream))
             {
                 DataTable table = TransformWorksheetToDataTable(pkg, worksheetName, firstRowIsHeader, columnType);
@@ -139,12 +172,17 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
         {
             var worksheet = package.Workbook.Worksheets[worksheetName];
 
+            if( worksheet == null)
+            {
+                return null;
+            }
+
             DataTable table = TransformWorksheetToDataTable(worksheet, firstRowIsHeader, columnType);
 
             return table;
         }
 
-        public static DataTable TransformWorksheetToDataTable(ExcelPackage package, int worksheetPosition = 1, bool firstRowIsHeader = false, Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
+        public static DataTable TransformWorksheetToDataTable(ExcelPackage package, int worksheetPosition = 0, bool firstRowIsHeader = false, Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
             var worksheet = package.Workbook.Worksheets[worksheetPosition];
 
@@ -155,6 +193,11 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
         public static DataTable TransformWorksheetToDataTable(ExcelWorksheet worksheet, bool firstRowIsHeader = false, Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
+            if( worksheet.Dimension == null)
+            {
+                return new DataTable(); // worksheet was empty
+            }
+
             var targetRange = worksheet.Cells[worksheet.Dimension.Address];
 
             DataTable table = TransformRangeToDataTable(targetRange, firstRowIsHeader, columnType);
@@ -163,7 +206,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
         }
 
 
-        public static DataTable TransformTableToDataTable(OfficeOpenXml.Table.ExcelTable table)
+        public static DataTable TransformTableToDataTable( OfficeOpenXml.Table.ExcelTable table)
         {
             var cells = table.WorkSheet.Cells;
 
@@ -173,7 +216,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
             for (int r = table.Address.Start.Row; r <= table.Address.End.Row; r++)
             {
-                if (!table.ShowHeader || r != firstRow)
+                if( !table.ShowHeader || r !=firstRow)
                 {
                     // start a new row because we don't have a header or this isn't the first row
                     // If there is no header it doesn't matter if we are on the first row
@@ -181,11 +224,11 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
                 }
                 int resultColumnIndex = 0;
                 // columns
-                for (int c = table.Address.Start.Column; c <= table.Address.End.Column; c++)
+                for( int c = table.Address.Start.Column; c <= table.Address.End.Column; c++)
                 {
                     var cell = table.WorkSheet.Cells[r, c];
 
-                    if (table.ShowHeader && r == firstRow)
+                    if(table.ShowHeader && r == firstRow)
                     {
                         // val is header name
                         result.Columns.Add(cell.Value as string, typeof(object));
@@ -199,7 +242,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
                 }
 
                 // might be the header row
-                if (resultRow != null)
+                if( resultRow != null)
                 {
                     result.Rows.Add(resultRow);
                 }
@@ -213,7 +256,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
 
 
-        public static DataTable TransformRangeToDataTable(ExcelRange range,
+        public static DataTable TransformRangeToDataTable(ExcelRange range, 
                                                     bool firstRowIsHeader = false,
                                                     Model.ColumnNameType columnType = Model.ColumnNameType.CellValue)
         {
@@ -228,7 +271,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
                 string excelColumnAddressName = ExcelUtility.GetExcelColumnFromNumber(columnNumber);
                 string cellValueAsString = ExcelReadUtility.ReadCellAsString(range.Worksheet, rowStart, columnNumber);
 
-                if (firstRowIsHeader == true &&
+                if( firstRowIsHeader == true && 
                     columnType == Model.ColumnNameType.CellValue &&
                     !string.IsNullOrEmpty(cellValueAsString)
                     )
@@ -244,7 +287,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
                 }
             }
 
-            if (firstRowIsHeader == true)
+            if( firstRowIsHeader == true )
             {
                 // take row 1 as a header
                 ++rowStart; // which means data will start on the next row
@@ -272,7 +315,6 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
             return dt;
         }
-
 
 
     }

@@ -8,8 +8,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 {
     public static class ExcelUtility
     {
-
-        public static List<string> GenerateExcelColumnNamesBetweenTwoColumnsInclusive(string columnStart, string columnEnd)
+            public static List<string> GenerateExcelColumnNamesBetweenTwoColumnsInclusive(string columnStart, string columnEnd )
         {
             List<string> columns = new List<string>();
 
@@ -17,7 +16,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
             int startingColumnNumber = GetNumberFromExcelColumn(columnStart);
             int endingColumnNumber = GetNumberFromExcelColumn(columnEnd);
 
-            for (int columnNumber = startingColumnNumber; columnNumber <= endingColumnNumber; ++columnNumber)
+            for (int columnNumber = startingColumnNumber; columnNumber <= endingColumnNumber; ++columnNumber )
             {
                 columns.Add(GetExcelColumnFromNumber(columnNumber));
             }
@@ -70,15 +69,15 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
 
         public static int? FindColumnIndexByValueIgnoreCase(ExcelWorksheet sheet, int row, string columnValue)
         {
-            if (row < 1 || row > sheet.Dimension.End.Row)
+            if( row < 1 || row > sheet.Dimension.End.Row)
             {
                 throw new Exception($"Row [{row}] is either less than 1, or it's greater than last row of [{sheet.Dimension.End.Row}]");
             }
 
-            for (int col = 1; col <= sheet.Dimension.End.Column; ++col)
+            for( int col = 1; col <= sheet.Dimension.End.Column; ++col)
             {
                 var val = sheet.Cells[row, col].Value.ToString();
-                if (string.Equals(val, columnValue, StringComparison.OrdinalIgnoreCase))
+                if( string.Equals(val, columnValue, StringComparison.OrdinalIgnoreCase))
                 {
                     return col;
                 }
@@ -88,7 +87,7 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
         }
 
 
-        public static Dictionary<string, int> FindAllColumnValueToIndexCaseInsensitive(ExcelWorksheet sheet, int row)
+        public static Dictionary<string,int> FindAllColumnValueToIndexCaseInsensitive(ExcelWorksheet sheet, int row)
         {
             var dict = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -106,6 +105,27 @@ namespace WebPad.Dependencies.General.EPPlusUtilities
             return dict;
         }
 
+
+        public static ExcelWorksheet GetOrAddWorksehet(ExcelPackage pkg, string worksheetName)
+        {
+            ExcelWorksheet ws = pkg.Workbook.Worksheets[worksheetName];
+            if (ws == null)
+            {
+                ws = pkg.Workbook.Worksheets.Add(worksheetName);
+            }
+            return ws;
+        }
+
+
+        public static void DeleteWorksheet(ExcelPackage pkg, string worksheetName)
+        {
+            var ws = pkg.Workbook.Worksheets[worksheetName];
+            if( ws != null)
+            {
+                pkg.Workbook.Worksheets.Delete(ws);
+            }
+        }
+    
 
     }
 }

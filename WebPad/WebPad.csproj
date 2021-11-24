@@ -1,87 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <ProductVersion>9.0.30729</ProductVersion>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net461</TargetFramework>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <StartupObject>WebPad.App</StartupObject>
-    <ApplicationIcon>globe.ico</ApplicationIcon>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <SignManifests>false</SignManifests>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-    <TargetZone>Custom</TargetZone>
-    <FileUpgradeFlags />
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <AssemblyTitle>WebPad</AssemblyTitle>
-    <Company>Philip Hendry</Company>
-    <Product>WebPad</Product>
-    <Copyright>Copyright © Philip Hendry 2010</Copyright>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <PostBuildEvent>for %25%25a in ($(SolutionDir)\libs\*.dll) do "$(SolutionDir)lib\GZipCompress\bin\Debug\GZipCompress.exe" %25%25a</PostBuildEvent>
-    <PreBuildEvent />
-    <PostBuildEvent>for %25%25a in ($(SolutionDir)\libs\*.dll) do "$(SolutionDir)lib\GZipCompress\bin\Debug\GZipCompress.exe" %25%25a</PostBuildEvent>
-    <PreBuildEvent />
-    <PostBuildEvent>for %25%25a in ($(SolutionDir)\libs\*.dll) do "$(SolutionDir)lib\GZipCompress\bin\Debug\GZipCompress.exe" %25%25a</PostBuildEvent>
-    <PreBuildEvent />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>for %25%25a in ($(SolutionDir)\libs\*.dll) do "$(SolutionDir)lib\GZipCompress\bin\Debug\GZipCompress.exe" %25%25a</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent />
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="AvalonEdit" Version="5.0.2" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.4.9" />
-    <PackageReference Include="log4net" Version="2.0.5" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.1.0" />
-    <PackageReference Include="ncWPFFormsLib" Version="1.0.7042.24013" />
-    <PackageReference Include="netstandardDbSQLiteHelper" Version="1.0.0.1" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.11" />
-    <PackageReference Include="SQLitePCLRaw.core" Version="1.1.11" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.linux" Version="1.1.11" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.osx" Version="1.1.11" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.v110_xp" Version="1.1.11" />
-    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3.net45" Version="1.1.11" />
-    <PackageReference Include="WPFToolkit" Version="3.5.50211.1" />
-    <PackageReference Include="ZetaLongPaths" Version="1.0.0.28" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\jQuery1.4.3_api.xml" />
   </ItemGroup>
@@ -118,4 +43,5 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  
 </Project>

@@ -257,7 +257,7 @@ namespace WebPad
 
         public void RenameRecentFile(Models.RecentFileModel file)
         {
-            var form = new nac.wpf.Forms.Form()
+            var form = new nac.wpf.forms.Form()
                             .TextBoxFor("FileName", file.FileName)
                             .Display();
 

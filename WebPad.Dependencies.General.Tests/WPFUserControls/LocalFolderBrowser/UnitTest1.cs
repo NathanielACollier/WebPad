@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using runWPF = WebPad.Dependencies.General.WPFUtilities.Run.Run;
+using runWPF = nac.wpf.utilities.Run.Run;
 using System.Threading.Tasks;
 using controls = WebPad.Dependencies.General.WPFUserControls;
 using System.Linq;
@@ -14,13 +14,10 @@ namespace WebPad.Dependencies.General.Tests.WPFUserControls.LocalFolderBrowser
         [TestMethod]
         public async Task BasicControlDisplayTest()
         {
-            var result = await runWPF.runWithUIThread(new WPFUtilities.Run.RunOnUIArgs
+            var result = await runWPF.runWithUIThread(win =>
             {
-                RunAfterWindowAvailable = (win) =>
-                {
-                    var browser = new controls.LocalFolderBrowser.LocalFolderBrowser();
-                    win.Content = browser;
-                }
+                var browser = new controls.LocalFolderBrowser.LocalFolderBrowser();
+                win.Content = browser;
             });
 
             Assert.IsTrue(result.IsError == false);
@@ -47,15 +44,12 @@ namespace WebPad.Dependencies.General.Tests.WPFUserControls.LocalFolderBrowser
         [TestMethod]
         public async Task ControlDisplayWithFileExtensionFilter()
         {
-            var result = await runWPF.runWithUIThread(new WPFUtilities.Run.RunOnUIArgs
+            var result = await runWPF.runWithUIThread(win =>
             {
-                RunAfterWindowAvailable = (win) =>
-                {
-                    var browser = new controls.LocalFolderBrowser.LocalFolderBrowser();
-                    win.Content = browser;
+                var browser = new controls.LocalFolderBrowser.LocalFolderBrowser();
+                win.Content = browser;
 
-                    browser.FileExtensions = "php bat";
-                }
+                browser.FileExtensions = "php bat";
             });
 
             Assert.IsTrue(result.IsError == false);

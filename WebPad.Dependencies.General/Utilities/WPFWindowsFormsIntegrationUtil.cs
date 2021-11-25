@@ -32,13 +32,11 @@ namespace WebPad.Dependencies.General.Utilities
             {
                 _handle = handle;
             }
-
-            #region IWin32Window Members
+            
             System.IntPtr System.Windows.Forms.IWin32Window.Handle
             {
                 get { return _handle; }
             }
-            #endregion
         }
     }
 }

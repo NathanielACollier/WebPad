@@ -162,7 +162,7 @@ namespace WebPad
 
         #endregion
 
-        netstandardDbSQLiteHelper.Database db = null;
+        nac.Database.SQLite.Database db = null;
 
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -257,7 +257,7 @@ namespace WebPad
 
         public void RenameRecentFile(Models.RecentFileModel file)
         {
-            var form = new ncWPFFormsLib.Form()
+            var form = new nac.wpf.forms.Form()
                             .TextBoxFor("FileName", file.FileName)
                             .Display();
 

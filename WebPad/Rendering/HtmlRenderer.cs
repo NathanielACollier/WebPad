@@ -28,7 +28,7 @@ namespace WebPad.Rendering
 
                 bool navigateFiredOnce = false;
 
-                _myBrowser.Navigated += (sender, args) =>
+                _myBrowser.NavigationStarting += (sender, args) =>
                 {
                     // suppress script errors
                     if( navigateFiredOnce == false)
@@ -41,19 +41,14 @@ namespace WebPad.Rendering
                 };
 
 
-                _myBrowser.LoadCompleted += (sender, args) =>
+                _myBrowser.NavigationCompleted += (sender, args) =>
                 {
-                    // to be able to get clicks in the document
-                    //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
-                    //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
-                    //  -- and: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
-
-                    var doc = _myBrowser.Document as MSHTML.HTMLDocument;
-
-                    var doc2 = doc as MSHTML.DispHTMLDocument; // events are on this guy
-
                     var onClickHandler = new DHTMLEventHandler(doc);
                     onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);
+                    _myBrowser.MouseUp += (_s, _args) =>
+                    {
+                        _args.
+                    };
 
                     doc2.onclick = onClickHandler;
 

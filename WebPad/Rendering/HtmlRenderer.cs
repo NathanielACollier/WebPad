@@ -15,7 +15,7 @@ namespace WebPad.Rendering
 
         // built in internet explorer
         //  Will use whatever version the user has installed
-        private readonly System.Windows.Controls.WebBrowser _myBrowser;
+        private readonly Microsoft.Web.WebView2.Wpf.WebView2 _myBrowser;
 
         
 
@@ -24,7 +24,7 @@ namespace WebPad.Rendering
             // setup and host the internet explorer web browser that is built into the .net Windows Forms framework
             try
             {
-                _myBrowser = new WebBrowser();
+                _myBrowser = new Microsoft.Web.WebView2.Wpf.WebView2();
 
                 bool navigateFiredOnce = false;
 

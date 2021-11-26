@@ -33,20 +33,12 @@
   <ItemGroup>
     <Resource Include="globe.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="MSHTML">
-      <Guid>{3050F1C5-98B5-11CF-BB82-00AA00BDCE0B}</Guid>
-      <VersionMajor>4</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+
+  
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.1.2.30" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.38" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1020.30" />
     <PackageReference Include="nac.Database.SQLite" Version="1.0.0" />
     <PackageReference Include="nac.wpf.forms" Version="2.0.2" />
   </ItemGroup>

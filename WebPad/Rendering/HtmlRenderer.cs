@@ -120,7 +120,7 @@ namespace WebPad.Rendering
 
         public void ScrollBrowserTo(int lineNumber, int column)
         {
-            if( _myBrowser != null)
+            if( _myBrowser?.CoreWebView2 != null)
             {
                 _myBrowser.CoreWebView2.ExecuteScriptAsync($@"
                     // finding element by attribute see: https://stackoverflow.com/questions/2694640/find-an-element-in-dom-based-on-an-attribute-value

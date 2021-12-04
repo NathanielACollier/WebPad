@@ -33,8 +33,9 @@ namespace WebPad.Rendering
                     // suppress script errors
                     if( navigateFiredOnce == false)
                     {
-                        log.Info("Suppressing Browser Script Errors");
-                        Utilities.WebBrowserUtil.HideScriptErrors(_myBrowser, true);
+                        // do whatever you might want to do only one time, in the entire browser navigation cycle
+                        // Used to do the suppress script errors of IE here
+                        // TODO: Probably remove this whole code block later
                         navigateFiredOnce = true;
                     }
                     
@@ -43,94 +44,77 @@ namespace WebPad.Rendering
 
                 _myBrowser.NavigationCompleted += (sender, args) =>
                 {
-                    var onClickHandler = new DHTMLEventHandler(doc);
-                    onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);
-                    _myBrowser.MouseUp += (_s, _args) =>
-                    {
-                        _args.
-                    };
-
-                    doc2.onclick = onClickHandler;
-
-                    var onMouseOverHandler = new DHTMLEventHandler(doc);
-                    onMouseOverHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseover);
-
-                    doc2.onmouseover = onMouseOverHandler;
-
-                    var onMouseOutHandler = new DHTMLEventHandler(doc);
-                    onMouseOutHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseout);
-
-                    doc2.onmouseout = onMouseOutHandler;
+                    // TODO: Need to setup document click stuff
+                    // We lost all the IE document selection stuff, so would need to do that with javascript and events and stuff
                 };
 
+                _myBrowser.CoreWebView2.WebMessageReceived += (_s, args) =>
+                {
+                    handleWebView2_WebMessageReceived(jsonResult: args.WebMessageAsJson);
+                };
 
+                // setup different things
+                _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
 
+                    let hoverGblStyleName = 'webpadGlobalStyles_MouseOver';
+                    // create the class we are going to apply on mouse enter
+                    let hoverGlbStyle = document.createElement('style');
+                    hoverGlbStyle.type = 'text/css';
+                    hoverGlbStyle.innerhtml = `
+                        .${hoverGblStyleName} {
+                            background-color: purple;
+                        }
+                    `;
+                    document.getElementsByTagName('head')[0].appendChild(hoverGblStyle);
+
+                    // setup document click to send a message
+                    // from: https://stackoverflow.com/questions/29555044/javascript-global-onclick-listener
+                    document.addEventListener('click', (e) => {
+                        // element is e.target
+                        // We've got attributes set on every element with what line number and column it is
+                        let lineNumber = e.target.getAttribute('linenumber');
+                        let column = e.target.getAttribute('column');
+
+                        window.chrome.webview.postMessage({
+                            lineNumber: lineNumber,
+                            column: column,
+                            type: 'elementClick'
+                        });
+                    });
+
+                    // setup the hover so we can highlight the element
+                    document.addEventListener('mouseenter',(e)=> {
+                        e.target.classList.add(hoverGblStyleName);
+                    });
+
+                    document.addEventListener('mouseleave', (e)=> {
+                        e.target.classList.add(hoverGblStyleName);
+                        e.target.classList.remove(hoverGblStyleName);
+                    });
+                ");
 
                 controlPanel.Children.Add(_myBrowser);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(string.Format("Problem occured loading internet explorer browser.  Exception: {0}", ex), "Internet Explorer Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Problem occured loading browser.  Exception: {ex}", "Browser Load Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
 
         }
 
-
-
-        // idea and original code for highlight on hover from: https://stackoverflow.com/questions/1090754/c-sharp-web-browser-with-click-and-highlight
-        // keep up with what elements we've marked with a highlight
-        //   - also holds the original style so we can set it back after the mouse leaves
-        private IDictionary<MSHTML.IHTMLElement, string> elementStyles = new Dictionary<MSHTML.IHTMLElement, string>();
-
-        private void DocWithEvents_onmouseover(MSHTML.IHTMLEventObj pEvtObj)
+        private void handleWebView2_WebMessageReceived(string jsonResult)
         {
-            if(!this.elementStyles.ContainsKey(pEvtObj.srcElement))
+            dynamic result = System.Text.Json.Nodes.JsonNode.Parse(jsonResult);
+
+            if (string.Equals(result.type, "elementClick", StringComparison.OrdinalIgnoreCase))
             {
-                // capture the original style so we can set it back when mouse leaves
-                string style = pEvtObj.srcElement.style.cssText;
-                this.elementStyles.Add(pEvtObj.srcElement, style); // saved
-                // now change it
-                pEvtObj.srcElement.style.cssText = style + "; background-color: purple;";
-                
-            }
-        }
-
-
-        private void DocWithEvents_onmouseout(MSHTML.IHTMLEventObj pEvtObj)
-        {
-            if(this.elementStyles.ContainsKey(pEvtObj.srcElement))
-            {
-                string originalStyle = this.elementStyles[pEvtObj.srcElement];
-                this.elementStyles.Remove(pEvtObj.srcElement);
-                pEvtObj.srcElement.style.cssText = originalStyle;
-            }
-        }
-
-
-
-        protected void myWebBrowser_DocumentClickEvent(MSHTML.IHTMLEventObj args)
-        {
-            if( args.srcElement != null)
-            {
-                var lineNumber = args.srcElement.getAttribute("linenumber", 0) as string;
-                var column = args.srcElement.getAttribute("column", 0) as string;
-
-                if( lineNumber != null)
+                log.Info($"Element clicked: [Line: {result.lineNumber}; Column: {result.column}] ");
+                this.WebBrowserElementClicked?.Invoke(this._myBrowser, new WebBrowserElementClickedEventArgs
                 {
-                    log.Info($"Element clicked with AvalonEdit html source line number {lineNumber}");
-                    if( this.WebBrowserElementClicked != null)
-                    {
-                        this.WebBrowserElementClicked(this._myBrowser, new WebBrowserElementClickedEventArgs
-                        {
-                            LineNumber = lineNumber,
-                            Column = column
-                        });
-                    }
-                }
+                    LineNumber = result.lineNumber,
+                    Column = result.column
+                });
             }
-
-            // see: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
-            args.returnValue = false;
         }
 
 
@@ -138,37 +122,16 @@ namespace WebPad.Rendering
         {
             if( _myBrowser != null)
             {
-                var doc = _myBrowser.Document as MSHTML.HTMLDocument;
-                // if the user hasn't hit F5 then the web browser control won't show anything
-                if ( doc != null)
+                _myBrowser.CoreWebView2.ExecuteScriptAsync($@"
+                    // finding element by attribute see: https://stackoverflow.com/questions/2694640/find-an-element-in-dom-based-on-an-attribute-value
+                    let target = document.querySelector('[linNumber=""{lineNumber}""] [column=""{column}""]');
+
+                    target.scrollIntoView(); // see: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView                   
+                ").ContinueWith(t =>
                 {
-                    var lineAnchors = doc.getElementsByClassName(Rendering.HtmlInjectLineNumberAnchors.cssClassMarker)
-                                                .OfType<MSHTML.HTMLGenericElement>();
+                    log.Info($"Scrolling should be columented for Element[Line: {lineNumber}; column: {column}]");
+                });
 
-                    if(lineAnchors.Any())
-                    {
-                        // first element greater than or equal to line number (Scroll to it)
-                        var greaterThanEqualToLineNumber = from e in lineAnchors
-                                                           let num = Convert.ToInt32(e.getAttribute("linenumber") as string)
-                                                           where num >= lineNumber
-                                                           select e;
-
-                        if (greaterThanEqualToLineNumber.Any())
-                        {
-                            var target = greaterThanEqualToLineNumber.First();
-                            log.Info($"Scrolling to element with source line {target.getAttribute("linenumber", 0)}, column {target.getAttribute("column")}");
-                            target.scrollIntoView();
-                        }
-                        else
-                        {
-                            log.Info($"No element found at line {lineNumber}, so scrolling to end");
-                            lineAnchors.Last().scrollIntoView();
-                        }
-                    }// end of if any line anchors
-
-                    
-                 }// end of if doc != null
-                
             }
         }
 
@@ -183,7 +146,7 @@ namespace WebPad.Rendering
                 try
                 {
                     string url = snippetDocControl.EnsureServer();
-                    _myBrowser.Navigate(url);
+                    _myBrowser.CoreWebView2.Navigate(url);
                 }
                 catch (Exception ex)
                 {

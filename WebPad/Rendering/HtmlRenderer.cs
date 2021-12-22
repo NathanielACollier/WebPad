@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebPad.Rendering
 {
@@ -46,52 +47,8 @@ namespace WebPad.Rendering
                 {
                     // TODO: Need to setup document click stuff
                     // We lost all the IE document selection stuff, so would need to do that with javascript and events and stuff
+                    SetupDocumentInteraction();
                 };
-
-                _myBrowser.CoreWebView2.WebMessageReceived += (_s, args) =>
-                {
-                    handleWebView2_WebMessageReceived(jsonResult: args.WebMessageAsJson);
-                };
-
-                // setup different things
-                _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
-
-                    let hoverGblStyleName = 'webpadGlobalStyles_MouseOver';
-                    // create the class we are going to apply on mouse enter
-                    let hoverGlbStyle = document.createElement('style');
-                    hoverGlbStyle.type = 'text/css';
-                    hoverGlbStyle.innerhtml = `
-                        .${hoverGblStyleName} {
-                            background-color: purple;
-                        }
-                    `;
-                    document.getElementsByTagName('head')[0].appendChild(hoverGblStyle);
-
-                    // setup document click to send a message
-                    // from: https://stackoverflow.com/questions/29555044/javascript-global-onclick-listener
-                    document.addEventListener('click', (e) => {
-                        // element is e.target
-                        // We've got attributes set on every element with what line number and column it is
-                        let lineNumber = e.target.getAttribute('linenumber');
-                        let column = e.target.getAttribute('column');
-
-                        window.chrome.webview.postMessage({
-                            lineNumber: lineNumber,
-                            column: column,
-                            type: 'elementClick'
-                        });
-                    });
-
-                    // setup the hover so we can highlight the element
-                    document.addEventListener('mouseenter',(e)=> {
-                        e.target.classList.add(hoverGblStyleName);
-                    });
-
-                    document.addEventListener('mouseleave', (e)=> {
-                        e.target.classList.add(hoverGblStyleName);
-                        e.target.classList.remove(hoverGblStyleName);
-                    });
-                ");
 
                 controlPanel.Children.Add(_myBrowser);
             }
@@ -100,6 +57,56 @@ namespace WebPad.Rendering
                 System.Windows.MessageBox.Show($"Problem occured loading browser.  Exception: {ex}", "Browser Load Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
 
+        }
+
+        private void SetupDocumentInteraction()
+        {
+            // This should be called once navigation is completed, once we are at the final web page we can workout document events
+            
+            _myBrowser.CoreWebView2.WebMessageReceived += (_s, args) =>
+            {
+                handleWebView2_WebMessageReceived(jsonResult: args.WebMessageAsJson);
+            };
+
+            // setup different things
+            _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+
+                let hoverGblStyleName = 'webpadGlobalStyles_MouseOver';
+                // create the class we are going to apply on mouse enter
+                let hoverGlbStyle = document.createElement('style');
+                hoverGlbStyle.type = 'text/css';
+                hoverGlbStyle.innerhtml = `
+                    .${hoverGblStyleName} {
+                        background-color: purple;
+                    }
+                `;
+                document.getElementsByTagName('head')[0].appendChild(hoverGblStyle);
+
+                // setup document click to send a message
+                // from: https://stackoverflow.com/questions/29555044/javascript-global-onclick-listener
+                document.addEventListener('click', (e) => {
+                    // element is e.target
+                    // We've got attributes set on every element with what line number and column it is
+                    let lineNumber = e.target.getAttribute('linenumber');
+                    let column = e.target.getAttribute('column');
+
+                    window.chrome.webview.postMessage({
+                        lineNumber: lineNumber,
+                        column: column,
+                        type: 'elementClick'
+                    });
+                });
+
+                // setup the hover so we can highlight the element
+                document.addEventListener('mouseenter',(e)=> {
+                    e.target.classList.add(hoverGblStyleName);
+                });
+
+                document.addEventListener('mouseleave', (e)=> {
+                    e.target.classList.add(hoverGblStyleName);
+                    e.target.classList.remove(hoverGblStyleName);
+                });
+            ");
         }
 
         private void handleWebView2_WebMessageReceived(string jsonResult)
@@ -138,13 +145,15 @@ namespace WebPad.Rendering
 
 
 
-        public void Render( UserControls.SnippetDocumentControl snippetDocControl)
+        public async Task Render( UserControls.SnippetDocumentControl snippetDocControl)
         {
             // load the document text into the internet explorer browser
             if (_myBrowser != null)
             {
                 try
                 {
+                    // see info on how to navigate here: https://stackoverflow.com/questions/63116740/why-my-corewebview2-which-is-object-of-webview2-is-null
+                    await _myBrowser.EnsureCoreWebView2Async();
                     string url = snippetDocControl.EnsureServer();
                     _myBrowser.CoreWebView2.Navigate(url);
                 }

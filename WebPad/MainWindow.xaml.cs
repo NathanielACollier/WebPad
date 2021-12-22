@@ -406,7 +406,10 @@ namespace WebPad
                     }
 
                     // render what we have
-                    _resultsRenderer.Render(selectedDoc);
+                    _resultsRenderer.Render(selectedDoc).ContinueWith(t =>
+                    {
+                        log.Info("Render completed");
+                    });
                 }
             }
         }
@@ -503,7 +506,10 @@ namespace WebPad
             }
 
             log.Info("Rendering");
-            _resultsRenderer.Render(currentDoc);
+            _resultsRenderer.Render(currentDoc).ContinueWith(t =>
+            {
+                log.Info("Render completed");
+            });
         }
 
 

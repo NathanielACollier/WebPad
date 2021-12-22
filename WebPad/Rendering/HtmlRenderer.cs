@@ -43,11 +43,10 @@ namespace WebPad.Rendering
                 };
 
 
-                _myBrowser.NavigationCompleted += (sender, args) =>
+                _myBrowser.NavigationCompleted += async (sender, args) =>
                 {
                     // TODO: Need to setup document click stuff
                     // We lost all the IE document selection stuff, so would need to do that with javascript and events and stuff
-                    SetupDocumentInteraction();
                 };
 
                 controlPanel.Children.Add(_myBrowser);
@@ -59,7 +58,7 @@ namespace WebPad.Rendering
 
         }
 
-        private void SetupDocumentInteraction()
+        private async Task SetupDocumentInteraction()
         {
             // This should be called once navigation is completed, once we are at the final web page we can workout document events
             
@@ -69,7 +68,7 @@ namespace WebPad.Rendering
             };
 
             // setup different things
-            _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+            await _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
 
                 let hoverGblStyleName = 'webpadGlobalStyles_MouseOver';
                 // create the class we are going to apply on mouse enter
@@ -154,6 +153,7 @@ namespace WebPad.Rendering
                 {
                     // see info on how to navigate here: https://stackoverflow.com/questions/63116740/why-my-corewebview2-which-is-object-of-webview2-is-null
                     await _myBrowser.EnsureCoreWebView2Async();
+                    await SetupDocumentInteraction();
                     string url = snippetDocControl.EnsureServer();
                     _myBrowser.CoreWebView2.Navigate(url);
                 }

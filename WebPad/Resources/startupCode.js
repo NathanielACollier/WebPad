@@ -24,7 +24,7 @@ function codeToRunOnStartup() {
                         background-color: purple;
                     }
                 `;
-    document.getElementsByTagName('head')[0].appendChild(hoverGblStyle);
+    document.getElementsByTagName('head')[0].appendChild(hoverGlbStyle);
 
     // setup document click to send a message
     // from: https://stackoverflow.com/questions/29555044/javascript-global-onclick-listener
@@ -43,11 +43,22 @@ function codeToRunOnStartup() {
 
     // setup the hover so we can highlight the element
     document.addEventListener('mouseenter', (e) => {
-        e.target.classList.add(hoverGblStyleName);
+        /*
+        document doesn't have classList
+         */
+        if( e.target && e.target != document){
+            e.target.classList.add(hoverGblStyleName);
+        }
+        
     });
 
     document.addEventListener('mouseleave', (e) => {
-        e.target.classList.add(hoverGblStyleName);
-        e.target.classList.remove(hoverGblStyleName);
+        /*
+        document doesn't have classList
+         */
+        if( e.target && e.target != document){
+            e.target.classList.add(hoverGblStyleName);
+            e.target.classList.remove(hoverGblStyleName);
+        }
     });
 } // end of codeToRunOnStartup

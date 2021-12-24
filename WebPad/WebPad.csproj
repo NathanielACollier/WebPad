@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\jQuery1.4.3_api.xml" />
+    <None Remove="Resources\startupCode.js" />
+    <EmbeddedResource Include="Resources\startupCode.js" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Intellisense\VSObject_Event.bmp" />

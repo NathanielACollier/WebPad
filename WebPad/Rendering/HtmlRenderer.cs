@@ -67,9 +67,17 @@ namespace WebPad.Rendering
                 handleWebView2_WebMessageReceived(jsonResult: args.WebMessageAsJson);
             };
 
-            // setup different things
-            await _myBrowser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+            _myBrowser.CoreWebView2.DOMContentLoaded += async (_s, args) =>
+            {
+                await fireOffJavascriptDocumentsetupCode();
+            };
+            
+        }
 
+        private async Task<bool> fireOffJavascriptDocumentsetupCode()
+        {
+            string resultJSONText = await _myBrowser.CoreWebView2.ExecuteScriptAsync(@"
+                frogsound();
                 let hoverGblStyleName = 'webpadGlobalStyles_MouseOver';
                 // create the class we are going to apply on mouse enter
                 let hoverGlbStyle = document.createElement('style');
@@ -105,7 +113,21 @@ namespace WebPad.Rendering
                     e.target.classList.add(hoverGblStyleName);
                     e.target.classList.remove(hoverGblStyleName);
                 });
+
+                return {
+                    success: true
+                }
             ");
+            
+            // look at the result
+            dynamic result = System.Text.Json.Nodes.JsonNode.Parse(resultJSONText);
+
+            if (result.success == true)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private void handleWebView2_WebMessageReceived(string jsonResult)

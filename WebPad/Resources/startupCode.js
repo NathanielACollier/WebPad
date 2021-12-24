@@ -43,6 +43,9 @@ function codeToRunOnStartup() {
 
     // setup the hover so we can highlight the element
     document.addEventListener('mouseenter', (e) => {
+        if( e.target && e.target.tagName){
+            console.log(`mouseenter: [tagName: ${e.target.tagName}]`);
+        }
         /*
         document doesn't have classList
          */

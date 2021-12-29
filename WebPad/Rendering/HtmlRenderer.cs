@@ -95,9 +95,9 @@ namespace WebPad.Rendering
 
         private void handleWebView2_WebMessageReceived(string jsonResult)
         {
-            dynamic result = System.Text.Json.Nodes.JsonNode.Parse(jsonResult);
+            var result = System.Text.Json.JsonSerializer.Deserialize<Models.HtmlTagInjectedAttributes>(jsonResult);
 
-            if (string.Equals(result.type, "elementClick", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals((string)result.type, "elementClick", StringComparison.OrdinalIgnoreCase))
             {
                 log.Info($"Element clicked: [Line: {result.lineNumber}; Column: {result.column}] ");
                 this.WebBrowserElementClicked?.Invoke(this._myBrowser, new WebBrowserElementClickedEventArgs

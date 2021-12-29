@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace WebPad.Rendering
@@ -77,19 +78,21 @@ namespace WebPad.Rendering
         private async Task<bool> fireOffJavascriptDocumentsetupCode()
         {
             string resultJSONText = await _myBrowser.CoreWebView2.ExecuteScriptAsync(@"
-                return {
-                    success: true
-                };
+                ( () => {
+                    return {
+                        success: true
+                    }
+                })();
             ");
             
             // look at the result
-            dynamic result = System.Text.Json.Nodes.JsonNode.Parse(resultJSONText);
-/*
-            if (result.success == true)
+            var result = System.Text.Json.Nodes.JsonNode.Parse(resultJSONText);
+
+            if ((bool)result["success"] == true)
             {
                 return true;
             }
-*/
+
             return false;
         }
 

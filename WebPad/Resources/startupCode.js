@@ -19,11 +19,15 @@ function codeToRunOnStartup() {
     // create the class we are going to apply on mouse enter
     let hoverGlbStyle = document.createElement('style');
     hoverGlbStyle.type = 'text/css';
-    hoverGlbStyle.innerhtml = `
-                    .${hoverGblStyleName} {
-                        background-color: purple;
-                    }
-                `;
+    hoverGlbStyle.appendChild(
+        document.createTextNode(
+        `
+                .${hoverGblStyleName} {
+                    background-color: purple;
+                }
+            `)
+    );
+
     document.getElementsByTagName('head')[0].appendChild(hoverGlbStyle);
 
     // setup document click to send a message
@@ -42,7 +46,7 @@ function codeToRunOnStartup() {
     });
 
     // setup the hover so we can highlight the element
-    document.addEventListener('mouseenter', (e) => {
+    document.addEventListener('mouseover', (e) => {
         if( e.target && e.target.tagName){
             console.log(`mouseenter: [tagName: ${e.target.tagName}]`);
         }

@@ -55,17 +55,13 @@ function codeToRunOnStartup() {
          */
         if( e.target && e.target != document){
             e.target.classList.add(hoverGblStyleName);
+            
+            // watch for the leave, and remove the style
+            e.target.addEventListener("mouseleave", (e) => {
+                e.target.classList.remove(hoverGblStyleName);
+            });
         }
         
     });
-
-    document.addEventListener('mouseleave', (e) => {
-        /*
-        document doesn't have classList
-         */
-        if( e.target && e.target != document){
-            e.target.classList.add(hoverGblStyleName);
-            e.target.classList.remove(hoverGblStyleName);
-        }
-    });
+    
 } // end of codeToRunOnStartup

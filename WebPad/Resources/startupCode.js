@@ -27,17 +27,37 @@ function codeToRunOnStartup() {
     
     // setup the hover so we can highlight the element
     document.addEventListener('mouseover', (e) => {
-
         /*
         document doesn't have classList
          */
         if( e.target && e.target != document){
             onNewTargetElement(e.target);
         }
-        
+    });
+    
+    document.addEventListener("mouseleave", (e) => {
+        // if the mouse leaves the document, then don't leave anything highlighted
+        onNewTargetElement(null);
     });
     
 } // end of codeToRunOnStartup
+
+let previouseTargetElement = null;
+
+function onNewTargetElement(target) {
+
+    if( previouseTargetElement ){
+        // remove the class
+        previouseTargetElement.classList.remove(hoverGblStyleName);
+    }
+
+    if( target && target.tagName){
+        console.log(`onNewTargetElement: [tagName: ${target.tagName}; id: ${target?.id ?? ''}]`);
+        previouseTargetElement = target;
+
+        target.classList.add(hoverGblStyleName);
+    }
+}
 
 function docReady(fn) {
     // see if DOM is already available
@@ -66,19 +86,4 @@ function setupStyles(){
     document.getElementsByTagName('head')[0].appendChild(hoverGlbStyle);
 }
 
-let previouseTargetElement = null;
 
-function onNewTargetElement(target) {
-    
-    if( previouseTargetElement ){
-        // remove the class
-        previouseTargetElement.classList.remove(hoverGblStyleName);
-    }
-    
-    if( target && target.tagName){
-        console.log(`onNewTargetElement: [tagName: ${target.tagName}; id: ${target?.id ?? ''}]`);
-        previouseTargetElement = target;
-        
-        target.classList.add(hoverGblStyleName);
-    }
-}

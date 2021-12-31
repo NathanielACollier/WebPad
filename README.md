@@ -8,3 +8,4 @@
 * 11/30/2017 I modified the code I had at the time to be distributable (Imported all the dependencies) and put it here.
 
 + 11/25/2021 Converted the project to sdk format, and compiled it against .net 6.
++ 12/30/2021 Internet Explorer result window replaced with Chromium based WebView2 Control

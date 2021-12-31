@@ -4,6 +4,8 @@ using System.Text;
 using System.Linq;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Threading.Tasks;
 
 namespace WebPad.Rendering
 {
@@ -15,7 +17,7 @@ namespace WebPad.Rendering
 
         // built in internet explorer
         //  Will use whatever version the user has installed
-        private readonly System.Windows.Controls.WebBrowser _myBrowser;
+        private readonly Microsoft.Web.WebView2.Wpf.WebView2 _myBrowser;
 
         
 
@@ -24,171 +26,124 @@ namespace WebPad.Rendering
             // setup and host the internet explorer web browser that is built into the .net Windows Forms framework
             try
             {
-                _myBrowser = new WebBrowser();
+                _myBrowser = new Microsoft.Web.WebView2.Wpf.WebView2();
 
                 bool navigateFiredOnce = false;
 
-                _myBrowser.Navigated += (sender, args) =>
+                _myBrowser.NavigationStarting += (sender, args) =>
                 {
                     // suppress script errors
                     if( navigateFiredOnce == false)
                     {
-                        log.Info("Suppressing Browser Script Errors");
-                        Utilities.WebBrowserUtil.HideScriptErrors(_myBrowser, true);
+                        // do whatever you might want to do only one time, in the entire browser navigation cycle
+                        // Used to do the suppress script errors of IE here
+                        // TODO: Probably remove this whole code block later
                         navigateFiredOnce = true;
                     }
                     
                 };
 
 
-                _myBrowser.LoadCompleted += (sender, args) =>
+                _myBrowser.NavigationCompleted += async (sender, args) =>
                 {
-                    // to be able to get clicks in the document
-                    //  -- see: https://stackoverflow.com/questions/2189510/wpf-webbrowser-mouse-events-not-working-as-expected
-                    //  -- and: https://msdn.microsoft.com/en-us/library/aa769764(v=vs.85).aspx
-                    //  -- and: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
-
-                    var doc = _myBrowser.Document as MSHTML.HTMLDocument;
-
-                    var doc2 = doc as MSHTML.DispHTMLDocument; // events are on this guy
-
-                    var onClickHandler = new DHTMLEventHandler(doc);
-                    onClickHandler.Handler += new DHTMLEvent(this.myWebBrowser_DocumentClickEvent);
-
-                    doc2.onclick = onClickHandler;
-
-                    var onMouseOverHandler = new DHTMLEventHandler(doc);
-                    onMouseOverHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseover);
-
-                    doc2.onmouseover = onMouseOverHandler;
-
-                    var onMouseOutHandler = new DHTMLEventHandler(doc);
-                    onMouseOutHandler.Handler += new DHTMLEvent(this.DocWithEvents_onmouseout);
-
-                    doc2.onmouseout = onMouseOutHandler;
+                    // TODO: Need to setup document click stuff
+                    // We lost all the IE document selection stuff, so would need to do that with javascript and events and stuff
                 };
-
-
-
 
                 controlPanel.Children.Add(_myBrowser);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(string.Format("Problem occured loading internet explorer browser.  Exception: {0}", ex), "Internet Explorer Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Problem occured loading browser.  Exception: {ex}", "Browser Load Failed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
 
         }
 
-
-
-        // idea and original code for highlight on hover from: https://stackoverflow.com/questions/1090754/c-sharp-web-browser-with-click-and-highlight
-        // keep up with what elements we've marked with a highlight
-        //   - also holds the original style so we can set it back after the mouse leaves
-        private IDictionary<MSHTML.IHTMLElement, string> elementStyles = new Dictionary<MSHTML.IHTMLElement, string>();
-
-        private void DocWithEvents_onmouseover(MSHTML.IHTMLEventObj pEvtObj)
+        private async Task SetupDocumentInteraction()
         {
-            if(!this.elementStyles.ContainsKey(pEvtObj.srcElement))
+            // This should be called once navigation is completed, once we are at the final web page we can workout document events
+            
+            _myBrowser.CoreWebView2.WebMessageReceived += (_s, args) =>
             {
-                // capture the original style so we can set it back when mouse leaves
-                string style = pEvtObj.srcElement.style.cssText;
-                this.elementStyles.Add(pEvtObj.srcElement, style); // saved
-                // now change it
-                pEvtObj.srcElement.style.cssText = style + "; background-color: purple;";
-                
-            }
+                handleWebView2_WebMessageReceived(jsonResult: args.WebMessageAsJson);
+            };
+
+            _myBrowser.CoreWebView2.DOMContentLoaded += async (_s, args) =>
+            {
+                await fireOffJavascriptDocumentsetupCode();
+            };
+            
         }
 
-
-        private void DocWithEvents_onmouseout(MSHTML.IHTMLEventObj pEvtObj)
+        private async Task<bool> fireOffJavascriptDocumentsetupCode()
         {
-            if(this.elementStyles.ContainsKey(pEvtObj.srcElement))
-            {
-                string originalStyle = this.elementStyles[pEvtObj.srcElement];
-                this.elementStyles.Remove(pEvtObj.srcElement);
-                pEvtObj.srcElement.style.cssText = originalStyle;
-            }
-        }
-
-
-
-        protected void myWebBrowser_DocumentClickEvent(MSHTML.IHTMLEventObj args)
-        {
-            if( args.srcElement != null)
-            {
-                var lineNumber = args.srcElement.getAttribute("linenumber", 0) as string;
-                var column = args.srcElement.getAttribute("column", 0) as string;
-
-                if( lineNumber != null)
-                {
-                    log.Info($"Element clicked with AvalonEdit html source line number {lineNumber}");
-                    if( this.WebBrowserElementClicked != null)
-                    {
-                        this.WebBrowserElementClicked(this._myBrowser, new WebBrowserElementClickedEventArgs
-                        {
-                            LineNumber = lineNumber,
-                            Column = column
-                        });
+            string resultJSONText = await _myBrowser.CoreWebView2.ExecuteScriptAsync(@"
+                ( () => {
+                    return {
+                        success: true
                     }
-                }
+                })();
+            ");
+            
+            // look at the result
+            var result = System.Text.Json.Nodes.JsonNode.Parse(resultJSONText);
+
+            if ((bool)result["success"] == true)
+            {
+                return true;
             }
 
-            // see: https://weblog.west-wind.com/posts/2004/Apr/27/Handling-mshtml-Document-Events-without-Mouse-lockups
-            args.returnValue = false;
+            return false;
+        }
+
+        private void handleWebView2_WebMessageReceived(string jsonResult)
+        {
+            var result = System.Text.Json.JsonSerializer.Deserialize<Models.HtmlTagInjectedAttributes>(jsonResult);
+
+            if (string.Equals((string)result.type, "elementClick", StringComparison.OrdinalIgnoreCase))
+            {
+                log.Info($"Element clicked: [Line: {result.lineNumber}; Column: {result.column}] ");
+                this.WebBrowserElementClicked?.Invoke(this._myBrowser, new WebBrowserElementClickedEventArgs
+                {
+                    LineNumber = result.lineNumber,
+                    Column = result.column
+                });
+            }
         }
 
 
         public void ScrollBrowserTo(int lineNumber, int column)
         {
-            if( _myBrowser != null)
+            if( _myBrowser?.CoreWebView2 != null)
             {
-                var doc = _myBrowser.Document as MSHTML.HTMLDocument;
-                // if the user hasn't hit F5 then the web browser control won't show anything
-                if ( doc != null)
+                _myBrowser.CoreWebView2.ExecuteScriptAsync($@"
+                    // finding element by attribute see: https://stackoverflow.com/questions/2694640/find-an-element-in-dom-based-on-an-attribute-value
+                    let target = document.querySelector('[linNumber=""{lineNumber}""] [column=""{column}""]');
+
+                    target.scrollIntoView(); // see: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView                   
+                ").ContinueWith(t =>
                 {
-                    var lineAnchors = doc.getElementsByClassName(Rendering.HtmlInjectLineNumberAnchors.cssClassMarker)
-                                                .OfType<MSHTML.HTMLGenericElement>();
+                    log.Info($"Scrolling should be columented for Element[Line: {lineNumber}; column: {column}]");
+                });
 
-                    if(lineAnchors.Any())
-                    {
-                        // first element greater than or equal to line number (Scroll to it)
-                        var greaterThanEqualToLineNumber = from e in lineAnchors
-                                                           let num = Convert.ToInt32(e.getAttribute("linenumber") as string)
-                                                           where num >= lineNumber
-                                                           select e;
-
-                        if (greaterThanEqualToLineNumber.Any())
-                        {
-                            var target = greaterThanEqualToLineNumber.First();
-                            log.Info($"Scrolling to element with source line {target.getAttribute("linenumber", 0)}, column {target.getAttribute("column")}");
-                            target.scrollIntoView();
-                        }
-                        else
-                        {
-                            log.Info($"No element found at line {lineNumber}, so scrolling to end");
-                            lineAnchors.Last().scrollIntoView();
-                        }
-                    }// end of if any line anchors
-
-                    
-                 }// end of if doc != null
-                
             }
         }
 
 
 
 
-        public void Render( UserControls.SnippetDocumentControl snippetDocControl)
+        public async Task Render( UserControls.SnippetDocumentControl snippetDocControl)
         {
             // load the document text into the internet explorer browser
             if (_myBrowser != null)
             {
                 try
                 {
+                    // see info on how to navigate here: https://stackoverflow.com/questions/63116740/why-my-corewebview2-which-is-object-of-webview2-is-null
+                    await _myBrowser.EnsureCoreWebView2Async();
+                    await SetupDocumentInteraction();
                     string url = snippetDocControl.EnsureServer();
-                    _myBrowser.Navigate(url);
+                    _myBrowser.CoreWebView2.Navigate(url);
                 }
                 catch (Exception ex)
                 {

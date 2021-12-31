@@ -10,6 +10,8 @@ namespace WebPad.Rendering
     {
         private static readonly string _basePageHtml = ResourceUtilities.GetEmbeddedResourceString("WebPad.Resources.Templates.ResultsPage.html");
 
+        private static readonly string _javascriptStartupcode =
+            ResourceUtilities.GetEmbeddedResourceString("WebPad.Resources.startupCode.js");
 
         public static string GetDocumentText(UserControls.SnippetDocumentControl snippetDocControl)
         {
@@ -30,7 +32,8 @@ namespace WebPad.Rendering
                 Html = HtmlInjectLineNumberAnchors.Inject(snippetDocControl.Html),
                 CSS = snippetDocControl.CSS,
                 PageTitle = snippetDocControl.SaveFileName,
-                BaseHref = baseHref
+                BaseHref = baseHref,
+                javascriptStartupCode = _javascriptStartupcode
             });
         }
     }

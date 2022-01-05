@@ -95,10 +95,20 @@ namespace WebPad.Parsing
 
         private static string GetBodyHTML(HtmlAgilityPack.HtmlDocument doc)
         {
-            var bodySections = doc.DocumentNode.Descendants("body")
-                                            .Select(node => node.InnerHtml);
+            var body = doc.DocumentNode.SelectSingleNode("//body");
 
-            return string.Join(Environment.NewLine, bodySections);
+            var bodyNodesThatAreNotHTML = body.Descendants()
+                .Where(n =>
+                    new[] { "script", "style" }
+                        .Contains(n.Name, StringComparer.OrdinalIgnoreCase)
+                ).ToList();
+
+            foreach (var notHtml in bodyNodesThatAreNotHTML)
+            {
+                notHtml.Remove();
+            }
+
+            return body.InnerHtml;
         }
 
 

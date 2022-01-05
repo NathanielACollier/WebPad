@@ -53,14 +53,6 @@ namespace WebPad.File
         }
 
 
-        private static void SaveToHTMLFile(SnippetDocumentControl snippet, string filePath)
-        {
-            var documentText = HtmlTemplate.GetDocumentText(snippet);
-
-            System.IO.File.WriteAllText(filePath, documentText);
-        }
-
-
 
         private static string GetNewFilePath(SnippetDocumentControl snippet)
         {
@@ -107,7 +99,7 @@ namespace WebPad.File
                 if (new[] { ".html", ".htm" }.Contains(fileExt,
                         StringComparer.OrdinalIgnoreCase))
                 {
-                    SaveToHTMLFile(snippet, filePath);
+                    File.SaveToHtmlHandler.Save(snippet, filePath);
                 }else if (string.Equals(fileExt, ".web", StringComparison.OrdinalIgnoreCase))
                 {
                     SaveToWebFile(snippet, filePath);

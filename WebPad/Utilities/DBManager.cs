@@ -30,8 +30,7 @@ namespace WebPad.Utilities
             __internalDatabaseRef.Command(@"
                 create table if not exists RecentFiles(
                     FileName varchar(200) not null,
-                    FullPath varchar(2000) not null,
-                    Type varchar(100) not null
+                    FullPath varchar(2000) not null
                 )
             ");
             //__internalDatabaseRef.Command(@"drop table HtmlSnippets");
@@ -43,17 +42,7 @@ namespace WebPad.Utilities
                 )
             ");
         }
-
-
-        private static File.SaveHandler.SaveType GetRecentFileTypeFromString(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                return File.SaveHandler.SaveType.WebPad;
-            }
-
-            return (File.SaveHandler.SaveType)Enum.Parse(typeof(File.SaveHandler.SaveType), text);
-        }
+        
 
 
         public static IEnumerable<Models.RecentFileModel> GetAllRecentFiles()
@@ -66,8 +55,7 @@ namespace WebPad.Utilities
             var files = recentEntries.Select(dict => new Models.RecentFileModel
             {
                 FileName = dict["FileName"] as string,
-                Path = dict["FullPath"] as string,
-                Type = GetRecentFileTypeFromString(dict["Type"] as string)
+                Path = dict["FullPath"] as string
             });
 
             return files;
@@ -141,13 +129,12 @@ namespace WebPad.Utilities
             if (!existingEntryResult.Any())
             {
                 db.Command(@"
-                    insert into RecentFiles(FileName, FullPath, Type)
-                    values(:name, :path, :type)
+                    insert into RecentFiles(FileName, FullPath)
+                    values(:name, :path)
                     ", new Dictionary<string, object>
                     {
                         {":name", file.FileName },
-                        {":path", file.Path },
-                        {":type", file.Type.ToString() }
+                        {":path", file.Path }
                     });
                 didAdd = true;
             }

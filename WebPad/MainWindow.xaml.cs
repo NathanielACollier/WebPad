@@ -44,12 +44,11 @@ namespace WebPad
         // File Commands
         public static readonly RoutedCommand CommandExit = new RoutedCommand();
 
-        public static readonly RoutedCommand CommandSaveAsWebPad = new RoutedCommand();
+        public static readonly RoutedCommand CommandSaveAs = new RoutedCommand();
 
         // window commands
         public static readonly RoutedCommand CommandNextPane = new RoutedCommand();
         public static readonly RoutedCommand CommandHideResultsPane = new RoutedCommand();
-        public static readonly RoutedCommand CommandHideHelpPane = new RoutedCommand();
         public static readonly RoutedCommand CommandHideEditorPane = new RoutedCommand();
 
 
@@ -58,14 +57,7 @@ namespace WebPad
         public static readonly RoutedCommand CommandBrowserChrome = new RoutedCommand();
         public static readonly RoutedCommand CommandBrowserFirefox = new RoutedCommand();
         public static readonly RoutedCommand CommandBrowserEdge = new RoutedCommand();
-
         
-
-        // html commands
-        public static readonly RoutedCommand CommandOpenFromHTML = new RoutedCommand();
-        public static readonly RoutedCommand CommandSaveToHTML = new RoutedCommand();
-
-        public static readonly RoutedCommand CommandSaveAsHTML = new RoutedCommand();
 
         private readonly CanExecuteRoutedEventHandler _canAlwaysExecute = (sender, e) => e.CanExecute = true;
 
@@ -91,8 +83,8 @@ namespace WebPad
             CommandBindings.Add(new CommandBinding(CommandExit, ExecuteExit));
             CommandExit.InputGestures.Add(new KeyGesture(Key.F4, ModifierKeys.Alt));
 
-            MenuSaveAsWebPad.Command = CommandSaveAsWebPad;
-            CommandBindings.Add(new CommandBinding(CommandSaveAsWebPad, ExecuteSaveAsWebPad));
+            MenuSaveAs.Command = CommandSaveAs;
+            CommandBindings.Add(new CommandBinding(CommandSaveAs, ExecuteSaveAs));
 
 
             
@@ -124,19 +116,6 @@ namespace WebPad
 
             MenuBrowserEdge.Command = CommandBrowserEdge;
             CommandBindings.Add(new CommandBinding(CommandBrowserEdge, ExecuteBrowserEdge));
-
-
-
-            // save/open html
-            MenuOpenFromHTML.Command = CommandOpenFromHTML;
-            CommandBindings.Add(new CommandBinding(CommandOpenFromHTML, ExecuteOpenFromHTML));
-
-            MenuSaveToHTML.Command = CommandSaveToHTML;
-            CommandBindings.Add(new CommandBinding(CommandSaveToHTML, ExecuteSaveToHTML));
-
-            MenuSaveAsHTML.Command = CommandSaveAsHTML;
-            CommandBindings.Add(new CommandBinding(CommandSaveAsHTML, ExecuteSaveAsHTML));
-
 
             // built in commands
 
@@ -246,7 +225,7 @@ namespace WebPad
 
         public void OpenRecentFile(Models.RecentFileModel file)
         {
-            SnippetDocumentControl snippet = File.OpenHandler.Open(file.Type, file.Path);
+            SnippetDocumentControl snippet = File.OpenHandler.Open( file.Path);
 
             if ( snippet != null)
             {
@@ -696,7 +675,7 @@ namespace WebPad
 
             try
             {
-                File.SaveHandler.Save(currentDoc, File.SaveHandler.SaveType.WebPad, false);
+                File.SaveHandler.Save(currentDoc, false);
                 UpdateHeaderOfSnippetDocumentControl(currentDoc);
 
 
@@ -706,51 +685,29 @@ namespace WebPad
                 System.Windows.MessageBox.Show(string.Format("Failed to save web file.  Exception: {0}", ex), "Failed to save web file", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
-        private void ExecuteSaveAsHTML(object sender, ExecutedRoutedEventArgs e)
+        
+        
+        private void ExecuteSaveAs(object sender, ExecutedRoutedEventArgs e)
         {
             var currentDoc = GetSelectedTabSnippetDocumentControl();
 
             if( currentDoc == null)
             {
-                System.Windows.MessageBox.Show("Cannot save as HTML, no document to save in this tab.", "Failed to save", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Cannot save as, no document to save in this tab.", "Failed to save as", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             try
             {
-                File.SaveHandler.Save(currentDoc, File.SaveHandler.SaveType.HTML, true);
+                File.SaveHandler.Save(currentDoc, true);
                 UpdateHeaderOfSnippetDocumentControl(currentDoc);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(string.Format("Failed to save as html.  Exception: {0}", ex), "Failed to save as HTML", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Failed to save as.  Exception: {ex}", "Failed to save as", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void ExecuteSaveAsWebPad(object sender, ExecutedRoutedEventArgs e)
-        {
-            var currentDoc = GetSelectedTabSnippetDocumentControl();
-
-            if( currentDoc == null)
-            {
-                System.Windows.MessageBox.Show("Cannot save as webpage, no document to save in this tab.", "Failed to save", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            try
-            {
-                File.SaveHandler.Save(currentDoc, File.SaveHandler.SaveType.WebPad, true);
-                UpdateHeaderOfSnippetDocumentControl(currentDoc);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(string.Format("Failed to save as WebPad.  Exception: {0}", ex), "Failed to save as WebPad", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
+        
 
         private void ExecuteOpen(object sender, ExecutedRoutedEventArgs e)
         {
@@ -761,14 +718,13 @@ namespace WebPad
                 // determine if we have a file open already
                 var currentDoc = GetSelectedTabSnippetDocumentControl();
 
-                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.WebPad);
+                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc);
                 if (snippet != null)
                 {
                     handleAddingRecentFile(new Models.RecentFileModel
                     {
                         Path = snippet.SaveFilePath,
-                        FileName = snippet.SaveFileName,
-                        Type = File.SaveHandler.SaveType.WebPad
+                        FileName = snippet.SaveFileName
                     });
 
                     AddSnippetTab(snippet);
@@ -783,58 +739,6 @@ namespace WebPad
             }
         }
 
-
-
-
-        private void ExecuteOpenFromHTML(object sender, ExecutedRoutedEventArgs e)
-        {
-
-
-            try
-            {
-                // determine if we have a file open already
-                var currentDoc = GetSelectedTabSnippetDocumentControl();
-
-                SnippetDocumentControl snippet = File.OpenHandler.Open(currentDoc, File.SaveHandler.SaveType.HTML);
-
-                if (snippet != null)
-                {
-                    AddSnippetTab(snippet);
-                }
-                else
-                {
-                    log.Info("Didn't open html, no snippet was found in file");
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(string.Format("Failed to load html file.  With Exception {0}",ex), "HTML File Open Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
-
-
-
-        private void ExecuteSaveToHTML(object sender, ExecutedRoutedEventArgs e)
-        {
-            var currentDoc = GetSelectedTabSnippetDocumentControl();
-            if( currentDoc == null)
-            {
-                System.Windows.MessageBox.Show("Failed to save to html, current tab doesn't have a document.", "Failed to save", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            try
-            {
-                File.SaveHandler.Save(currentDoc, File.SaveHandler.SaveType.HTML, false);
-                UpdateHeaderOfSnippetDocumentControl(currentDoc);
-
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show(string.Format("Failed to save html file.  Exception: {0}", ex), "Failed Saving HTML", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
 
 
         #endregion

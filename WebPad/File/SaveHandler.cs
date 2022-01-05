@@ -21,28 +21,6 @@ namespace WebPad.File
             HTML, WebPad
         };
 
-
-        private static SaveFileDialog CreateSaveHTMLDialog()
-        {
-            return new SaveFileDialog
-            {
-                AddExtension = true,
-                DefaultExt = "html",
-                Filter = "HTML (*.html)|*.html"
-            };
-        }
-
-        private static SaveFileDialog CreateSaveWebPadDialog()
-        {
-            return new SaveFileDialog
-            {
-                AddExtension = true,
-                DefaultExt = "web",
-                Filter = "WebPad Snippet (*.web)|*.web"
-            };
-        }
-
-
         private static void SaveToWebFile(SnippetDocumentControl snippetControl, string filePath)
         {
             var doc = SaveToXDocument(snippetControl);
@@ -84,36 +62,19 @@ namespace WebPad.File
 
 
 
-        private static string GetNewFilePath(SnippetDocumentControl snippet, SaveType type)
+        private static string GetNewFilePath(SnippetDocumentControl snippet)
         {
-            SaveFileDialog dialog = null;
-
-            if (type == SaveType.HTML)
+            SaveFileDialog dialog = new SaveFileDialog
             {
-                dialog = CreateSaveHTMLDialog();
-            }
-            else if (type == SaveType.WebPad)
-            {
-                dialog = CreateSaveWebPadDialog();
-            }
+                AddExtension = true,
+                DefaultExt = "html",
+                Filter = "HTML (*.html)|*.html|HTML (*.htm)|*.htm|WebPad Snippet (*.web)|*.web"
+            };
 
             if (dialog.ShowDialog() != DialogResult.OK)
                 return null;
 
             return dialog.FileName;
-        }
-
-
-
-        private static Boolean CanSaveToExistingFile(SnippetDocumentControl snippet, string extensionRequired)
-        {
-            if (System.IO.File.Exists(snippet.SaveFilePath) &&
-                string.Equals(System.IO.Path.GetExtension(snippet.SaveFilePath), extensionRequired, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -124,31 +85,14 @@ namespace WebPad.File
         /// <param name="saveAs">If false an attempt will be made to save the file back to it's original name or a new name if the file doesn't exist.
         ///                         If true it will save it to a new name no matter what
         ///                         This should enable save as functionality</param>
-        public static void Save(SnippetDocumentControl snippet, SaveType type, bool saveAs)
+        public static void Save(SnippetDocumentControl snippet, bool saveAs)
         {
             string filePath;
-            bool newFile = false;
-
-            if (!saveAs)
+            bool newFile = !System.IO.File.Exists(snippet.SaveFilePath);
+            
+            if (newFile || saveAs)
             {
-                // determine if the file exists
-                if (type == SaveType.WebPad && !CanSaveToExistingFile(snippet, ".web"))
-                {
-                    newFile = true;
-                }
-                else if (type == SaveType.HTML && !CanSaveToExistingFile(snippet, ".html"))
-                {
-                    newFile = true;
-                }
-            }
-            else
-            {
-                newFile = true;
-            }
-
-            if (newFile)
-            {
-                filePath = GetNewFilePath(snippet, type);
+                filePath = GetNewFilePath(snippet);
             }
             else
             {
@@ -158,14 +102,19 @@ namespace WebPad.File
             // make sure the filepath is not null or empty, because that might indicate the user canceled out of saving and we want to go back
             if (!string.IsNullOrEmpty(filePath))
             {
-
-                if (type == SaveType.HTML)
+                string fileExt = System.IO.Path.GetExtension(filePath);
+                
+                if (new[] { ".html", ".htm" }.Contains(fileExt,
+                        StringComparer.OrdinalIgnoreCase))
                 {
                     SaveToHTMLFile(snippet, filePath);
-                }
-                else if (type == SaveType.WebPad)
+                }else if (string.Equals(fileExt, ".web", StringComparison.OrdinalIgnoreCase))
                 {
                     SaveToWebFile(snippet, filePath);
+                }
+                else
+                {
+                    throw new Exception($"File extension [ext={fileExt}] is not a supported file type");
                 }
 
                 snippet.SaveFilePath = filePath; // this filepath may have changed
@@ -173,5 +122,10 @@ namespace WebPad.File
 
             }
         }
+        
+        
+        
+        
+        
     }
 }

@@ -15,31 +15,6 @@ namespace WebPad.File
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
-        private static OpenFileDialog CreateOpenWebPadDialog()
-        {
-            return new OpenFileDialog
-            {
-                AddExtension = true,
-                DefaultExt = "web",
-                Filter = "WebPad Snippet (*.web)|*.web"
-            };
-        }
-
-
-        private static OpenFileDialog CreateOpenHTMLDialog()
-        {
-            return new OpenFileDialog
-            {
-                AddExtension = true,
-                DefaultExt = "html",
-                Filter = "HTML (*.html)|*.html"
-            };
-        }
-
-
-
-
         private static SnippetDocumentControl GetSnippetControlFromSnippet( Snippet snippetData, string webPadFilePath = null)
         {
             SnippetDocumentControl snippet = null;
@@ -94,18 +69,14 @@ namespace WebPad.File
         }
 
 
-        public static SnippetDocumentControl Open(SnippetDocumentControl currentDoc, SaveHandler.SaveType type)
+        public static SnippetDocumentControl Open(SnippetDocumentControl currentDoc)
         {
-            OpenFileDialog dialog = null;
-
-            if (type == SaveHandler.SaveType.HTML)
+            OpenFileDialog dialog = new OpenFileDialog
             {
-                dialog = CreateOpenHTMLDialog();
-            }
-            else if (type == SaveHandler.SaveType.WebPad)
-            {
-                dialog = CreateOpenWebPadDialog();
-            }
+                AddExtension = true,
+                DefaultExt = "html",
+                Filter = "HTML (*.html)|*.html|HTML (*.htm)|*.htm|WebPad Snippet (*.web)|*.web"
+            };
 
             // set initial folder to be where our current file is, if we have one
             if (System.IO.File.Exists(currentDoc.SaveFilePath))
@@ -117,20 +88,25 @@ namespace WebPad.File
             if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return null;
 
-            return Open(type, dialog.FileName);
+            return Open( dialog.FileName);
         }
 
-        public static SnippetDocumentControl Open(SaveHandler.SaveType type, string filePath)
+        public static SnippetDocumentControl Open( string filePath)
         {
             SnippetDocumentControl snippet = null;
+            string fileExt = System.IO.Path.GetExtension(filePath);
 
-            if (type == SaveHandler.SaveType.HTML)
+            if (new[] { ".html", ".htm" }.Contains(fileExt,
+                    StringComparer.OrdinalIgnoreCase))
             {
                 snippet = Parsing.HTMLToSnippet.Parse(filePath);
+            }else if (string.Equals(fileExt, ".web", StringComparison.OrdinalIgnoreCase))
+            {
+                snippet = ParseSnippetFromWebPadFile(filePath);
             }
             else
             {
-                snippet = ParseSnippetFromWebPadFile(filePath);
+                throw new Exception($"File extension [ext={fileExt}] is not a supported file type");
             }
 
             // if there are no references add in the defaults
@@ -143,29 +119,6 @@ namespace WebPad.File
             snippet.IsModified = false;
 
             return snippet;
-        }
-
-
-        public static SnippetDocumentControl Open( string filePath)
-        {
-            string extension = System.IO.Path.GetExtension(filePath);
-
-            if (string.Equals(extension, ".html", StringComparison.OrdinalIgnoreCase))
-            {
-                // open html
-                log.Info($"Opening html file {filePath}");
-                var snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.HTML, filePath);
-                return snippet;
-            }
-            else if (string.Equals(extension, ".web", StringComparison.OrdinalIgnoreCase))
-            {
-                // open web
-                log.Info($"Opening web file {filePath}");
-                var snippet = File.OpenHandler.Open(File.SaveHandler.SaveType.WebPad, filePath);
-                return snippet;
-            }
-
-            throw new Exception($"Unsupported file type {extension}");
         }
 
 

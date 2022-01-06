@@ -11,14 +11,18 @@ public static class SaveToHtmlHandler
         public static void Save(SnippetDocumentControl snippet, string filePath)
         {
             var doc = new HtmlAgilityPack.HtmlDocument();
-            var node = HtmlAgilityPack.HtmlNode.CreateNode($@"
-                <html>
-                    <head></head>
-                    <body>
-                        {snippet.Html}
-                    </body>
-                </html>
-            ");
+            
+            // use newlines with Stringbuilder so the document formats better than using @""
+            var node = HtmlAgilityPack.HtmlNode.CreateNode(
+                new System.Text.StringBuilder()
+                    .AppendLine("<html>")
+                    .AppendLine("<head></head>")
+                    .AppendLine("<body>")
+                    .AppendLine(snippet.Html)
+                    .AppendLine("</body>")
+                    .AppendLine("</html>")
+                    .ToString()
+            );
             doc.DocumentNode.AppendChild(node);
             
             var head = doc.DocumentNode.SelectSingleNode("//head");
@@ -29,8 +33,12 @@ public static class SaveToHtmlHandler
             {
                 head.AppendChild(
                     HtmlAgilityPack.HtmlNode.CreateNode(
-                        "<style type='text/css'>" + Environment.NewLine + snippet.CSS + Environment.NewLine +"</style>"
-                        )
+                        new System.Text.StringBuilder()
+                            .AppendLine("<style type='text/css'>")
+                            .AppendLine(snippet.CSS)
+                            .AppendLine("</style>")
+                            .ToString()
+                    )
                 );
             }
             
@@ -39,8 +47,11 @@ public static class SaveToHtmlHandler
             {
                 body.AppendChild(
                     HtmlAgilityPack.HtmlNode.CreateNode(
-                        "<script type='text/javascript'>" + Environment.NewLine + snippet.Javascript +
-                        Environment.NewLine + "</script>"
+                        new System.Text.StringBuilder()
+                            .AppendLine("<script type='text/javascript'>" )
+                            .AppendLine(snippet.Javascript)
+                            .AppendLine("</script>")
+                            .ToString()
                     )
                 );
             }
@@ -58,17 +69,17 @@ public static class SaveToHtmlHandler
                 if (reference.Type == ReferenceTypes.Css)
                 {
                     head.AppendChild(
-                        HtmlAgilityPack.HtmlNode.CreateNode($@"
-                            <link rel='stylesheet' href='{reference.Url}'>
-                        ")
+                        HtmlAgilityPack.HtmlNode.CreateNode(
+                            $"<link rel='stylesheet' href='{reference.Url}'>"
+                            )
                     );
                 }
                 else if (reference.Type == ReferenceTypes.Javascript)
                 {
                     head.AppendChild(
-                        HtmlAgilityPack.HtmlNode.CreateNode($@"
-                            <script src='{reference.Url}' type='text/javascript'></script>
-                        ")
+                        HtmlAgilityPack.HtmlNode.CreateNode(
+                            $"<script src='{reference.Url}' type='text/javascript'></script>"
+                            )
                     );
                 }
                 else

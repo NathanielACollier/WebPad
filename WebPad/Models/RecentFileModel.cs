@@ -26,13 +26,6 @@ namespace WebPad.Models
             set { SetValue(() => this.Path, value); }
         }
 
-        public File.SaveHandler.SaveType Type
-        {
-            get { return GetValue(() => this.Type); }
-            set { SetValue(() => this.Type, value); }
-        }
-
-
         public ICommand OpenRecentFileCommand
         {
             get {

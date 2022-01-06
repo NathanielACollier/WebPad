@@ -53,11 +53,7 @@
                     </MenuItem.ContextMenu>
                 </MenuItem>
                 <MenuItem Command="ApplicationCommands.Save" />
-                <MenuItem x:Name="MenuSaveAsWebPad" Header="Save As"></MenuItem>
-                <Separator />
-                <MenuItem x:Name="MenuOpenFromHTML" Header="Open From HTML"></MenuItem>
-                <MenuItem x:Name="MenuSaveToHTML" Header="Save To HTML"></MenuItem>
-                <MenuItem x:Name="MenuSaveAsHTML" Header="Save As HTML"></MenuItem>
+                <MenuItem x:Name="MenuSaveAs" Header="Save As"></MenuItem>
                 <Separator />
                 <MenuItem x:Name="MenuExit" Header="E_xit" InputGestureText="Alt-F4" />
             </MenuItem>

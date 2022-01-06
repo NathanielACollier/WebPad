@@ -6,8 +6,7 @@
   <Javascript>$(document).ready(function(){
 	$("#helloWorldDiv").text("Hello World!");
 });</Javascript>
-  <CSS>
-.helloWorld{
+  <CSS>.helloWorld{
 	font-weight:bold;
 	font-size:72pt;
 	color:red;

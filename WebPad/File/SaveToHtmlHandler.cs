@@ -10,10 +10,15 @@ public static class SaveToHtmlHandler
     
         public static void Save(SnippetDocumentControl snippet, string filePath)
         {
-            var documentText = HtmlTemplate.GetDocumentText(snippet);
-            
             var doc = new HtmlAgilityPack.HtmlDocument();
-            var node = HtmlAgilityPack.HtmlNode.CreateNode("<html><head></head><body></body></html>");
+            var node = HtmlAgilityPack.HtmlNode.CreateNode($@"
+                <html>
+                    <head></head>
+                    <body>
+                        {snippet.Html}
+                    </body>
+                </html>
+            ");
             doc.DocumentNode.AppendChild(node);
             
             var head = doc.DocumentNode.SelectSingleNode("//head");
@@ -29,13 +34,6 @@ public static class SaveToHtmlHandler
                 );
             }
             
-            // save HTML
-            if (!string.IsNullOrWhiteSpace(snippet.Html))
-            {
-                body.AppendChild(
-                    HtmlAgilityPack.HtmlNode.CreateNode(snippet.Html)
-                );
-            }
             // save javascript
             if (!string.IsNullOrWhiteSpace(snippet.Javascript))
             {
@@ -49,12 +47,12 @@ public static class SaveToHtmlHandler
             
             AppendSnippetReferences(snippet, head);
 
-            System.IO.File.WriteAllText(filePath, documentText);
+            doc.Save(filename: filePath);
         }
 
         private static void AppendSnippetReferences(SnippetDocumentControl snippet, HtmlNode head)
         {
-            // take care of javascript references, append them to the end of the body
+            // take care of javascript references
             foreach (var reference in snippet.References)
             {
                 if (reference.Type == ReferenceTypes.Css)

@@ -94,6 +94,7 @@ namespace WebPad.File
             // make sure the filepath is not null or empty, because that might indicate the user canceled out of saving and we want to go back
             if (!string.IsNullOrEmpty(filePath))
             {
+                log.Info($"Saving file to {filePath}");
                 string fileExt = System.IO.Path.GetExtension(filePath);
                 
                 if (new[] { ".html", ".htm" }.Contains(fileExt,
@@ -111,6 +112,7 @@ namespace WebPad.File
 
                 snippet.SaveFilePath = filePath; // this filepath may have changed
                 snippet.IsModified = false;
+                log.Info("Saving file success");
 
             }
         }

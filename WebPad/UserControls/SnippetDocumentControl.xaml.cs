@@ -188,7 +188,7 @@ namespace WebPad.UserControls
         {
             get
             {
-                return System.IO.Path.GetFileNameWithoutExtension(SaveFilePath);
+                return System.IO.Path.GetFileName(SaveFilePath);
             }
         }
 

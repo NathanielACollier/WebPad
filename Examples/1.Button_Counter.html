@@ -1,0 +1,13 @@
+<html>
+<head><script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script><script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script></head>
+<body><div id='test'>Hello World!</div>
+
+<button id='b1'>Click Me!</button><script type="text/javascript">$(document).ready(() => {
+	let testDiv = $("#test");
+	let b1 = $("#b1");
+	let counter = 0;
+	b1.click(() => {
+		testDiv.text(`Counter is ${++counter}`);
+	});
+});</script></body>
+</html>

@@ -87,10 +87,7 @@
 
             </MenuItem>
             <MenuItem Header="_Browser">
-                <MenuItem x:Name="MenuBrowserIE" Header="Internet Explorer"></MenuItem>
-                <MenuItem x:Name="MenuBrowserFirefox" Header="Mozilla Firefox"></MenuItem>
-                <MenuItem x:Name="MenuBrowserChrome" Header="Google Chrome"></MenuItem>
-                <MenuItem x:Name="MenuBrowserEdge" Header="Edge"></MenuItem>
+                <MenuItem x:Name="MenuBrowserOpenDefault" Header="Open Default Browser"></MenuItem>
             </MenuItem>
         </Menu>
 

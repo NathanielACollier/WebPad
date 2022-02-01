@@ -50,7 +50,8 @@
                                 <Setter.Value>
                                     <ContextMenu>
                                         <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" />
-                                        <MenuItem Header="Remove" />
+                                        <MenuItem Header="Remove" Command="{Binding Path=RemoveCommand}" />
+                                        <MenuItem Header="Clear All" Command="{Binding Path=ClearAllCommand}"></MenuItem>
                                     </ContextMenu>
                                 </Setter.Value>
                             </Setter>

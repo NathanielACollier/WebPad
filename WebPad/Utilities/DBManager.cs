@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebPad.Models;
 
 namespace WebPad.Utilities
 {
@@ -178,7 +179,23 @@ namespace WebPad.Utilities
         }
 
 
+        public static void RemoveRecentFile(RecentFileModel file)
+        {
+            db.Command(@"
+                delete from RecentFiles
+                where LOWER(FullPath) = :path
+            ", new Dictionary<string, object>
+            {
+                { ":path", file.Path.ToLower() }
+            });
+        }
 
-
+        public static void ClearAllRecentFiles()
+        {
+            // delete all the recent files
+            db.Command(@"
+                delete from RecentFiles
+            ");
+        }
     }
 }

@@ -6,11 +6,11 @@
         xmlns:folderBrowser="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;assembly=WebPad.Dependencies.General"
      xmlns:Properties="clr-namespace:WebPad.Properties" 
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
         Title="Web Pad" 
         x:Name="webPadWindow"
         Height="399" 
         Width="654">
-
 
     <Grid x:Name="grdForm" >
         <Grid.RowDefinitions>
@@ -36,11 +36,22 @@
                         <Style TargetType="{x:Type MenuItem}">
                             <Setter Property="Header" Value="{Binding Path=FileName}" />
                             <Setter Property="Command" Value="{Binding Path=OpenRecentFileCommand}" />
+                            <Setter Property="ToolTip">
+                                <Setter.Value>
+                                    <ToolTip>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock>Path:</TextBlock>
+                                            <TextBlock Text="{Binding Path=Path}"></TextBlock>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </Setter.Value>
+                            </Setter>
                             <Setter Property="ContextMenu">
                                 <Setter.Value>
                                     <ContextMenu>
                                         <MenuItem Header="Rename" Command="{Binding Path=RenameCommand}" />
-                                        <MenuItem Header="Remove" />
+                                        <MenuItem Header="Remove" Command="{Binding Path=RemoveCommand}" />
+                                        <MenuItem Header="Clear All" Command="{Binding Path=ClearAllCommand}"></MenuItem>
                                     </ContextMenu>
                                 </Setter.Value>
                             </Setter>

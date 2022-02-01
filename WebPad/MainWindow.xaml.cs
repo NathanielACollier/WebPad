@@ -218,6 +218,16 @@ namespace WebPad
                 this.RenameRecentFile(_sender as Models.RecentFileModel);
             };
 
+            file.OnRemove += (_sender, _args) =>
+            {
+                this.RemoveFromRecentFiles(_sender as Models.RecentFileModel);
+            };
+
+            file.OnClearAll += (_sender, _args) =>
+            {
+                this.ClearAllRecentFiles();
+            };
+
             this.Model.RecentFiles.Add(file);
         }
 
@@ -247,6 +257,22 @@ namespace WebPad
             }
 
         }
+
+
+        public void RemoveFromRecentFiles(Models.RecentFileModel file)
+        {
+            Utilities.DBManager.RemoveRecentFile(file);
+            this.Model.RecentFiles.Remove(file);
+        }
+
+
+        public void ClearAllRecentFiles()
+        {
+            Utilities.DBManager.ClearAllRecentFiles();
+            this.Model.RecentFiles.Clear();
+        }
+        
+        
 
         private async Task handleAddingRecentFile(Models.RecentFileModel file)
         {

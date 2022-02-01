@@ -20,6 +20,16 @@
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Header" Value="{Binding Path=FileName}" />
                                     <Setter Property="Command" Value="{Binding Path=OpenCommand}" />
+                                    <Setter Property="ToolTip">
+                                        <Setter.Value>
+                                            <ToolTip>
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock>Path:</TextBlock>
+                                                    <TextBlock Text="{Binding Path=FilePath}"></TextBlock>
+                                                </StackPanel>
+                                            </ToolTip>
+                                        </Setter.Value>
+                                    </Setter>
                                     <Setter Property="ContextMenu">
                                         <Setter.Value>
                                             <ContextMenu>

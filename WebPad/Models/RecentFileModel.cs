@@ -14,6 +14,9 @@ namespace WebPad.Models
         public event Action<object, EventArgs> OnOpen;
         public event Action<object, EventArgs> OnRename;
 
+        public event Action<object, EventArgs> OnRemove;
+        public event Action<object, EventArgs> OnClearAll;
+
         public string FileName
         {
             get { return GetValue(() => this.FileName); }
@@ -48,6 +51,28 @@ namespace WebPad.Models
             }
         }
 
+        public RelayCommand RemoveCommand
+        {
+            get
+            {
+                return new RelayCommand((win) =>
+                {
+                    this.OnRemove?.Invoke(this, null);
+                });
+            }
+        }
+
+
+        public RelayCommand ClearAllCommand
+        {
+            get
+            {
+                return new RelayCommand((win) =>
+                {
+                    this.OnClearAll?.Invoke(this,null);
+                });
+            }
+        }
 
 
     }

@@ -23,6 +23,7 @@ using LocalFolderBrowser = WebPad.Dependencies.General.WPFUserControls.LocalFold
 
 using WebPad.Dependencies.General.Extensions.WPF;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -105,17 +106,8 @@ namespace WebPad
 
 
             // open in browser commands
-            MenuBrowserIE.Command = CommandBrowserIE;
-            CommandBindings.Add(new CommandBinding(CommandBrowserIE, ExecuteBrowserIE));
-
-            MenuBrowserChrome.Command = CommandBrowserChrome;
-            CommandBindings.Add(new CommandBinding(CommandBrowserChrome, ExecuteBrowserChrome));
-
-            MenuBrowserFirefox.Command = CommandBrowserFirefox;
-            CommandBindings.Add(new CommandBinding(CommandBrowserFirefox, ExecuteBrowserFirefox));
-
-            MenuBrowserEdge.Command = CommandBrowserEdge;
-            CommandBindings.Add(new CommandBinding(CommandBrowserEdge, ExecuteBrowserEdge));
+            MenuBrowserOpenDefault.Command = CommandBrowserIE;
+            CommandBindings.Add(new CommandBinding(CommandBrowserIE, ExecuteBrowserDefault));
 
             // built in commands
 
@@ -551,55 +543,48 @@ namespace WebPad
             }
 
         }
+        
 
-
-        private void LaunchBrowserAtUrl( string browserPath, string url)
-        {
-            if(!System.IO.File.Exists(browserPath))
-            {
-                System.Windows.MessageBox.Show($"Browser at path: {browserPath} does not exist.", "Failed to launch browser", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var p = new Process();
-            p.StartInfo.FileName = browserPath;
-            p.StartInfo.Arguments = $"{url}";
-            p.Start();
-        }
-
-        private void ExecuteBrowserIE(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteBrowserDefault(object sender, ExecutedRoutedEventArgs e)
         {
             ExecuteBrowser((url) =>
             {
-                LaunchBrowserAtUrl(Settings.Default.InternetExplorerEXEPath, url);
+                OpenUrl(url);
             });
         }
-
-        private void ExecuteBrowserChrome(object sender, ExecutedRoutedEventArgs e)
+        
+        /*
+         from: https://stackoverflow.com/questions/4580263/how-to-open-in-default-browser-in-c-sharp
+         */
+        private void OpenUrl(string url)
         {
-            ExecuteBrowser((url)=>
+            try
             {
-                LaunchBrowserAtUrl(Settings.Default.ChromeEXEPath, url);
-            });
-        }
-
-        private void ExecuteBrowserFirefox(object sender, ExecutedRoutedEventArgs e)
-        {
-            ExecuteBrowser((url)=>
+                Process.Start(url);
+            }
+            catch
             {
-                LaunchBrowserAtUrl(Settings.Default.FireFoxEXEPath, url);
-            });
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
-
-        private void ExecuteBrowserEdge(object sender, ExecutedRoutedEventArgs e)
-        {
-            // edge is different than the others
-            ExecuteBrowser(cmdWithURL: (url) =>
-            {
-                Process.Start($"microsoft-edge:{url}");
-            });
-        }
-
+        
 
         private static void ExecuteNextPane(object sender, ExecutedRoutedEventArgs e)
         {

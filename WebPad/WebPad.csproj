@@ -41,6 +41,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.39" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1020.30" />
     <PackageReference Include="nac.Database.SQLite" Version="1.1.0" />
+    <PackageReference Include="nac.WebServer" Version="1.0.1" />
     <PackageReference Include="nac.wpf.forms" Version="2.0.2" />
   </ItemGroup>
   

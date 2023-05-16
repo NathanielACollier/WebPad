@@ -12,151 +12,117 @@ namespace WebPad.WebServer
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        private nac.WebServer.WebServerManager webManager = new();
 
         private UserControls.SnippetDocumentControl control;
 
-        private string _url;
-        public string Url { get { return _url; }  }
-        private WebServer server;
+        public bool IsRunning
+        {
+            get { return webManager.IsRunning; }
+        }
 
-        public bool IsRunning { get; set; }
+        public string Url
+        {
+            get { return webManager.Url; }
+        }
 
         public WebPadServerManager(UserControls.SnippetDocumentControl _ctrl)
         {
             this.control = _ctrl;
+            this.webManager.OnNewRequest += WebManager_OnNewRequest;
+
+            nac.WebServer.lib.Log.OnNewMessage += (_s, _args) =>
+            {
+                log.Info("[" + _args.CallerType + "." + _args.CallingMemberName + "]" + _args.Level + " - " + _args.Message);
+            };
         }
 
-
-        private static void WriteTextResponse(HttpListenerResponse response, string contentType, string text)
+        private void WebManager_OnNewRequest(object sender, nac.WebServer.WebServerManager.OnNewRequestEventArgs e)
         {
-            var buf = Encoding.UTF8.GetBytes(text);
-            response.ContentType = contentType;
-            response.ContentLength64 = buf.Length;
-            response.OutputStream.Write(buf, 0, buf.Length);
+            if( e.Request.Url.LocalPath == "/")
+            {
+                serveRootHtml(e.Response);
+                return;
+            }
+
+            serveStaticFile(e.Request, e.Response);
         }
 
-        private static void WriteBinaryResponse(HttpListenerResponse response, string contentType, byte[] data)
+        private void serveRootHtml(HttpListenerResponse response)
         {
-            response.ContentType = contentType;
-            response.ContentLength64 = data.Length;
-            response.OutputStream.Write(data, 0, data.Length);
+            // serve webpage
+            string text = "";
+            // see: http://stackoverflow.com/questions/23442543/using-async-await-with-dispatcher-begininvoke
+            this.control.Dispatcher.InvokeAsync(() =>
+            {
+                text = Rendering.HtmlTemplate.GetDocumentText(this.control);
+            }).Wait();
+
+
+            nac.WebServer.lib.HttpHelper.WriteTextResponse(response, "text/html", text);
         }
 
-        private class FileServeData
+        private void serveStaticFile(HttpListenerRequest request, HttpListenerResponse response)
         {
-            public bool IsBinary { get; set; }
-            public string contentType { get; set; }
+            // try to serve static file
+            log.Info($"Incoming request: {request.Url.LocalPath}");
+            string baseDirectory = null;
+
+            if (!string.IsNullOrWhiteSpace(this.control.SaveFilePath))
+            {
+                baseDirectory = System.IO.Path.GetDirectoryName(this.control.SaveFilePath) + "\\";
+                if (!string.IsNullOrWhiteSpace(this.control.BaseHref))
+                {
+                    baseDirectory = Utilities.PathUtilities.MakeAbsolutePath(baseDirectory, this.control.BaseHref);
+                }
+                log.Info($"Base Directory: {baseDirectory}");
+                // serve the image???
+                string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\')
+                                                            .Replace("~", "\\");
+                log.Info($"Serving static file with [webpath={request.Url.LocalPath}, sysPath={filePath}]");
+
+                if (System.IO.File.Exists(filePath))
+                {
+                    string ext = System.IO.Path.GetExtension(filePath);
+                    var fileInfo = nac.WebServer.lib.HttpHelper.getFileServeInfo(ext);
+
+                    if (!string.IsNullOrWhiteSpace(fileInfo.contentType))
+                    {
+                        if (fileInfo.IsBinary == false)
+                        {
+                            nac.WebServer.lib.HttpHelper.WriteTextResponse(response, fileInfo.contentType, System.IO.File.ReadAllText(filePath));
+                        }
+                        else
+                        {
+                            nac.WebServer.lib.HttpHelper.WriteBinaryResponse(response, fileInfo.contentType, System.IO.File.ReadAllBytes(filePath));
+                        }
+                    }
+                    else
+                    {
+                        // binary octet stream
+                        nac.WebServer.lib.HttpHelper.WriteBinaryResponse(response, "application/octet-stream", System.IO.File.ReadAllBytes(filePath));
+                    }
+                }
+                else
+                {
+                    log.Warn($"File Not Found: {filePath}");
+                    nac.WebServer.lib.HttpHelper.WriteTextResponse(response, "application/text", $"ERROR - No File Found at url [{request.Url.LocalPath}]");
+                }
+
+
+            }
         }
-
-        // here is some documentation on mimetypeps: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
-        private static Dictionary<string, FileServeData> staticFileServeLookup = new Dictionary<string, FileServeData>(StringComparer.OrdinalIgnoreCase)
-        {
-            {".css", new FileServeData{ IsBinary=false, contentType="text/css"} }
-            ,{".html",new FileServeData{IsBinary = false, contentType="application/text" } }
-            ,{".js",new FileServeData{IsBinary = false, contentType="text/javascript" } }
-            ,{".svg", new FileServeData{IsBinary=false, contentType="image/svg+xml" }}
-            ,{".png", new FileServeData{IsBinary=true, contentType="image/png"}}
-        };
-
 
         public void Start()
         {
-            if( this.IsRunning)
-            {
-                throw new Exception("Allready running");
-            }
-            int retryLimit = 5;
-
-            do
-            {
-
-                try
-                {
-                    int port = TCPUtillity.FreeTcpPort();
-                    this._url = $"http://localhost:{port}/";
-
-                    this.server = new WebServer((request, response)=>{
-
-                        if( request.Url.LocalPath == "/")
-                        {
-                            // serve webpage
-                            string text = "";
-                            // see: http://stackoverflow.com/questions/23442543/using-async-await-with-dispatcher-begininvoke
-                            this.control.Dispatcher.InvokeAsync(() =>
-                            {
-                                text = Rendering.HtmlTemplate.GetDocumentText(this.control);
-                            }).Wait();
+            this.webManager.Start();
 
 
-                            WriteTextResponse(response, "text/html", text);
-                        } else
-                        {
-                            // try to serve static file
-                            log.Info($"Incoming request: {request.Url.LocalPath}");
-                            string baseDirectory = null;
-
-                            if(!string.IsNullOrWhiteSpace(this.control.SaveFilePath))
-                            {
-                                baseDirectory = System.IO.Path.GetDirectoryName(this.control.SaveFilePath) + "\\";
-                                if (!string.IsNullOrWhiteSpace(this.control.BaseHref))
-                                {
-                                    baseDirectory = Utilities.PathUtilities.MakeAbsolutePath(baseDirectory, this.control.BaseHref);
-                                }
-                                log.Info($"Base Directory: {baseDirectory}");
-                                // serve the image???
-                                string filePath = baseDirectory + request.Url.LocalPath.Replace('/', '\\')
-                                                                            .Replace("~", "\\");
-                                log.Info($"Serving static file with [webpath={request.Url.LocalPath}, sysPath={filePath}]");
-
-                                if(System.IO.File.Exists(filePath))
-                                {
-                                    string ext = System.IO.Path.GetExtension(filePath);
-                                    if (staticFileServeLookup.ContainsKey(ext))
-                                    {
-                                        var dictEntry = staticFileServeLookup[ext];
-
-                                        if (dictEntry.IsBinary == false)
-                                        {
-                                            WriteTextResponse(response, dictEntry.contentType, System.IO.File.ReadAllText(filePath));
-                                        } else
-                                        {
-                                            WriteBinaryResponse(response, dictEntry.contentType, System.IO.File.ReadAllBytes(filePath));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // binary octet stream
-                                        WriteBinaryResponse(response, "application/octet-stream", System.IO.File.ReadAllBytes(filePath));
-                                    }
-                                }else
-                                {
-                                    log.Warn($"File Not Found: {filePath}");
-                                    WriteTextResponse(response, "application/text", $"ERROR - No File Found at url [{request.Url.LocalPath}]");
-                                }
-
-                                
-                            }
-
-                            
-                        }
-
-                    }, this.Url);
-                    this.server.Run();
-                    this.IsRunning = true;
-                }
-                catch( Exception ex)
-                {
-
-                }
-                Thread.Sleep(100);
-                --retryLimit;
-            } while ( !this.IsRunning && retryLimit > 0);
         }
 
         public void Stop()
         {
-            this.server.Stop();
-            this.IsRunning = false;
+            this.webManager.Stop();
         }
     }
 }

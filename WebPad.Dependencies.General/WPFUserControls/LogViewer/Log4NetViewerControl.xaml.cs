@@ -15,6 +15,9 @@ using System.Collections.ObjectModel;
 using System.Threading; // assembly=System.Windows.Presentation
 
 using System.Windows.Threading;
+using OfficeOpenXml;
+using System.Data;
+using System.IO;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
 {
@@ -117,7 +120,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
 
             if (fileSaveDialog.ShowDialog() == true)
             {
-                EPPlusUtilities.ExcelDataTableUtility.SaveDataTableToExcel(
+                SaveDataTableToExcel(
                     fileSaveDialog.FileName,
                     logTable,
                     printHeader: true,
@@ -128,6 +131,32 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
                 if (clearQuestionMsg == MessageBoxResult.Yes)
                 {
                     ClearLog();
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Original code from: http://stackoverflow.com/questions/13669733/export-datatable-to-excel-with-epplus
+        /// </summary>
+        /// <param name="filePath"></param>
+        public static void SaveDataTableToExcel(string filePath, DataTable table, bool printHeader = false, string worksheetName = "data")
+        {
+            OfficeOpenXml.ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            using (var fs = new System.IO.FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Delete))
+            {
+                using (ExcelPackage pkg = new ExcelPackage(fs))
+                {
+                    ExcelWorksheet ws = pkg.Workbook.Worksheets[worksheetName];
+                    if (ws == null)
+                    {
+                        ws = pkg.Workbook.Worksheets.Add(worksheetName);
+                    }
+
+                    ws.Cells["A1"].LoadFromDataTable(table, printHeader);
+
+                    pkg.Save();
                 }
             }
         }

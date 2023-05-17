@@ -15,8 +15,8 @@
     <Resource Include="WPFUserControls\Resources\Images\file.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EPPlus" Version="5.8.3" />
-    <PackageReference Include="log4net" Version="2.0.13" />
+    <PackageReference Include="EPPlus" Version="6.2.4" />
+    <PackageReference Include="log4net" Version="2.0.15" />
   </ItemGroup>
   
 </Project>

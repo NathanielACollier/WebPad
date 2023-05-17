@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <AssemblyVersion>2.3.1</AssemblyVersion>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 

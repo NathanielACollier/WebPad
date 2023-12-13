@@ -26,7 +26,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
     /// </summary>
     public partial class Log4NetViewerControl : UserControl
     {
-        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static nac.Logging.Logger log = new();
         private ObservableCollection<Log4NetLogEntry> logEntries;
 
         /// <summary>
@@ -41,33 +41,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
             logEntries = new ObservableCollection<Log4NetLogEntry>();
             logViewerCtrl.DataContext = logEntries;
 
-            StartWaitForLog4NetToBeConfiguredThread();
-        }
-
-        private void StartWaitForLog4NetToBeConfiguredThread()
-        {
-            Thread t = new Thread(() => {
-                while (Log4NetHelpers.CodeConfiguredUtilities.IsLog4NetConfigured() == false)
-                {
-                    // Thread.Sleep(100); // just wait for a brief period
-
-                }
-
-                // got out of the loop, so it's configured now
-                this.Dispatcher.Invoke(() => {
-                    log.Debug("log4net is now configured, so setting up the notify appender");
-                    SetupLogCapture(); // basicly transfer back to GUI Thread
-                });
-            });
-
-            log.Debug("Starting the wait for log4net to be configured thread");
-            t.Start();
-        }
-
-
-        private void SetupLogCapture()
-        {
-            Log4NetHelpers.CodeConfiguredUtilities.AddNotifyAppender((sender, args) =>
+            nac.Logging.Logger.OnNewMessage += (_s, args) =>
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
@@ -76,24 +50,16 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
                         DateTime = DateTime.Now,
                         Message = args.Message,
                         Level = args.Level,
-                        LoggerName = args.LoggerName
+                        LoggerName = $"{args.CallingClassType.FullName}.{args.CallingMemberName}"
                     };
 
                     logEntries.Insert(0, newEntry); // insert at top so we don't have to do fancy scrolling
                     //LogEntries.Add(newEntry);
                 });
-
-            });// end of add notify appender
-
-            if (SetupComplete != null)
-            {
-                SetupComplete(this, new EventArgs());
-            }
-            else
-            {
-                log.Debug("Notify appender is now setup.  Log messages should start appearing.");
-            }
+            };
         }
+
+
 
         private void ExportLogButton_Click(object sender, RoutedEventArgs e)
         {

@@ -16,8 +16,6 @@ using MessageBox = System.Windows.MessageBox;
 using MessageBoxOptions = System.Windows.MessageBoxOptions;
 using System.Diagnostics;
 
-
-using Log4NetHelpers= WebPad.Dependencies.General.Log4NetHelpers;
 using LogViewer = WebPad.Dependencies.General.WPFUserControls.LogViewer;
 using LocalFolderBrowser = WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser;
 
@@ -135,7 +133,7 @@ namespace WebPad
 
         nac.Database.SQLite.Database db = null;
 
-        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static nac.Logging.Logger log = new();
 
         public MainWindow()
         {
@@ -154,8 +152,6 @@ namespace WebPad
 
             });
 
-
-            Log4NetHelpers.CodeConfiguredUtilities.InitializeLog4Net();
             Icon = BitmapFrame.Create(new Uri("pack://application:,,,/Resources/Images/globe.ico", UriKind.RelativeOrAbsolute));
 
 

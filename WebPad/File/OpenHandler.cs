@@ -13,7 +13,7 @@ namespace WebPad.File
 {
     public class OpenHandler
     {
-        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static nac.Logging.Logger log = new();
 
         private static SnippetDocumentControl GetSnippetControlFromSnippet( Snippet snippetData, string webPadFilePath = null)
         {

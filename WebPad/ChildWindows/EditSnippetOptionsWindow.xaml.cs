@@ -21,7 +21,7 @@ namespace WebPad.ChildWindows
     /// </summary>
     public partial class EditSnippetOptionsWindow : Window
     {
-        private static log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static nac.Logging.Logger log = new();
 
         public EditSnippetOptionsWindow(WebPad.UserControls.SnippetDocumentControl _docControl)
         {

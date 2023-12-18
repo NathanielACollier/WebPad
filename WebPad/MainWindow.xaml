@@ -142,7 +142,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="logTabContent">
-            <ncLogView:Log4NetViewerControl />
+            <ncLogView:LogViewerControl />
         </DataTemplate>
 
         <DataTemplate x:Key="docTabHeader">

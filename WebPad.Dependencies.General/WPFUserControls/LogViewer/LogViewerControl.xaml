@@ -27,26 +27,8 @@
             </Setter>
         </Style>
 
+
         <DataTemplate DataType="{x:Type local:LogEntry}">
-            <Grid IsSharedSizeScope="True">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition SharedSizeGroup="Index" Width="Auto"/>
-                    <ColumnDefinition SharedSizeGroup="Date" Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Text="{Binding DateTime}" Grid.Column="0"
-                       FontWeight="Bold" Margin="5,0,5,0"/>
-
-                <TextBlock Text="{Binding Index}" Grid.Column="1"
-                       FontWeight="Bold" Margin="0,0,2,0" />
-
-                <TextBlock Text="{Binding Message}" Grid.Column="2"
-                       TextWrapping="Wrap"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate DataType="{x:Type local:Log4NetLogEntry}">
             <Grid IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition  Width="Auto"/>
@@ -136,46 +118,17 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type local:CollapsibleLogEntry}">
-            <Grid IsSharedSizeScope="True">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition SharedSizeGroup="Index" Width="Auto"/>
-                    <ColumnDefinition SharedSizeGroup="Date" Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Text="{Binding DateTime}" Grid.Column="0"
-                       FontWeight="Bold" Margin="5,0,5,0"/>
-
-                <TextBlock Text="{Binding Index}" Grid.Column="1"
-                       FontWeight="Bold" Margin="0,0,2,0" />
-
-                <TextBlock Text="{Binding Message}" Grid.Column="2"
-                       TextWrapping="Wrap"/>
-
-                <ToggleButton x:Name="Expander" Grid.Row="1" Grid.Column="0"
-                          VerticalAlignment="Top" Content="+" HorizontalAlignment="Right"/>
-
-                <ItemsControl ItemsSource="{Binding Contents}" Style="{StaticResource LogViewerStyle}"
-                          Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                          x:Name="Contents" Visibility="Collapsed"/>
-
-            </Grid>
-            <DataTemplate.Triggers>
-                <Trigger SourceName="Expander" Property="IsChecked" Value="True">
-                    <Setter TargetName="Contents" Property="Visibility" Value="Visible"/>
-                    <Setter TargetName="Expander" Property="Content" Value="-"/>
-                </Trigger>
-            </DataTemplate.Triggers>
-        </DataTemplate>
     </UserControl.Resources>
 
-    <DockPanel>
+    <DockPanel x:Name="logViewerCtrl" >
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <Button Content="Export" Name="ExportLogButton" Margin="5,0" Click="ExportLogButton_Click" />
+            <Button Content="Clear" Name="ClearLogButton" Margin="5,0" Click="ClearLogButton_Click" />
+        </StackPanel>
+        
+        
         <TextBlock Text="{Binding Count, StringFormat='{}{0} Items'}"
                DockPanel.Dock="Top"/>
 

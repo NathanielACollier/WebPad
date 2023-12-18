@@ -335,7 +335,7 @@ namespace WebPad
             DocumentTab.Items.Insert(0, tabItem);
 
             var headerCtrl = headerTemplate.LoadContent() as StackPanel;
-            var bodyCtrl = contentTemplate.LoadContent() as LogViewer.Log4NetViewerControl;
+            var bodyCtrl = contentTemplate.LoadContent() as LogViewer.LogViewerControl;
 
             tabItem.Header = headerCtrl;
             tabItem.Content = bodyCtrl;

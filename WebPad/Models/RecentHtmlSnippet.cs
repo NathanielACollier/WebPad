@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebPad.Dependencies.General.WPFViewModelBase;
 
 namespace WebPad.Models
 {
-    public class RecentHtmlSnippet : ViewModelBase
+    public class RecentHtmlSnippet : nac.ViewModelBase.ViewModelBase
     {
 
         public event Action<object, EventArgs> OnOpen;
@@ -32,11 +31,11 @@ namespace WebPad.Models
         }
 
 
-        public RelayCommand OpenCommand
+        public nac.wpf.utilities.RelayCommand OpenCommand
         {
             get
             {
-                return new RelayCommand((param) =>
+                return new nac.wpf.utilities.RelayCommand((param) =>
                 {
                     this.OnOpen?.Invoke(this, null);
                 });

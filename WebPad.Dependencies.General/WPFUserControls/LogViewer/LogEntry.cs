@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
 {
-    internal class LogEntry : WPFViewModelBase.ViewModelBase
+    internal class LogEntry : nac.ViewModelBase.ViewModelBase
     {
         public DateTime DateTime
         {

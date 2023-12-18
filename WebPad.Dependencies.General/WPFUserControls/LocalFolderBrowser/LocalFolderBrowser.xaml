@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser"
-             xmlns:BusyIndicator="clr-namespace:WebPad.Dependencies.General.WPFUserControls.WpfBusyIndicator"
+             xmlns:BusyIndicator="clr-namespace:nac.wpf.controls.BusyControl;assembly=nac.wpf.controls.BusyControl"
              mc:Ignorable="d" 
              x:Name="localFolderBrowserCtrl"
              d:DesignHeight="300" d:DesignWidth="300">

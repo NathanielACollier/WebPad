@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using WebPad.Dependencies.General.WPFViewModelBase;
 
 namespace WebPad.Models
 {
-    public class RecentFileModel : ViewModelBase
+    public class RecentFileModel : nac.ViewModelBase.ViewModelBase
     {
         public event Action<object, EventArgs> OnOpen;
         public event Action<object, EventArgs> OnRename;
@@ -32,7 +31,7 @@ namespace WebPad.Models
         public ICommand OpenRecentFileCommand
         {
             get {
-                return new RelayCommand(win =>
+                return new nac.wpf.utilities.RelayCommand(win =>
                 {
                     this.OnOpen?.Invoke(this, null);
                 });
@@ -40,22 +39,22 @@ namespace WebPad.Models
         }
 
 
-        public RelayCommand RenameCommand
+        public nac.wpf.utilities.RelayCommand RenameCommand
         {
             get
             {
-                return new RelayCommand((win) =>
+                return new nac.wpf.utilities.RelayCommand((win) =>
                 {
                     this.OnRename?.Invoke(this, null);
                 });
             }
         }
 
-        public RelayCommand RemoveCommand
+        public nac.wpf.utilities.RelayCommand RemoveCommand
         {
             get
             {
-                return new RelayCommand((win) =>
+                return new nac.wpf.utilities.RelayCommand((win) =>
                 {
                     this.OnRemove?.Invoke(this, null);
                 });
@@ -63,11 +62,11 @@ namespace WebPad.Models
         }
 
 
-        public RelayCommand ClearAllCommand
+        public nac.wpf.utilities.RelayCommand ClearAllCommand
         {
             get
             {
-                return new RelayCommand((win) =>
+                return new nac.wpf.utilities.RelayCommand((win) =>
                 {
                     this.OnClearAll?.Invoke(this,null);
                 });

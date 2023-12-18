@@ -6,7 +6,7 @@ using System.Text;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 {
-    public class MainModel : WPFViewModelBase.ViewModelBase
+    public class MainModel : nac.ViewModelBase.ViewModelBase
     {
 
         public bool Busy

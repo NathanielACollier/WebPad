@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebPad.Dependencies.General.WPFUserControls.LocalFolderBrowser
 {
-    public class FileSystemNodeModel : WPFViewModelBase.ViewModelBase
+    public class FileSystemNodeModel : nac.ViewModelBase.ViewModelBase
     {
         public string Name
         {

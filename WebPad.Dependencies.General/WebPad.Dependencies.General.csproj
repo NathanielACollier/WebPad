@@ -16,6 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="nac.Logging" Version="1.0.3" />
+    <PackageReference Include="nac.ViewModelBase" Version="1.0.1" />
+    <PackageReference Include="nac.wpf.controls.BusyControl" Version="2.0.0" />
+    <PackageReference Include="nac.wpf.utilities" Version="2.0.4" />
   </ItemGroup>
   
 </Project>

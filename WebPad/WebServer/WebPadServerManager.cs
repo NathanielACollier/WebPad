@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+using nac.WebServer.lib;
 
 namespace WebPad.WebServer
 {
@@ -58,8 +59,7 @@ namespace WebPad.WebServer
                 text = Rendering.HtmlTemplate.GetDocumentText(this.control);
             }).Wait();
 
-
-            nac.WebServer.lib.HttpHelper.WriteTextResponse(response, "text/html", text);
+            response.WriteTextResponse("text/html", text);
         }
 
         private void serveStaticFile(HttpListenerRequest request, HttpListenerResponse response)
@@ -90,23 +90,23 @@ namespace WebPad.WebServer
                     {
                         if (fileInfo.IsBinary == false)
                         {
-                            nac.WebServer.lib.HttpHelper.WriteTextResponse(response, fileInfo.contentType, System.IO.File.ReadAllText(filePath));
+                            response.WriteTextResponse( fileInfo.contentType, System.IO.File.ReadAllText(filePath));
                         }
                         else
                         {
-                            nac.WebServer.lib.HttpHelper.WriteBinaryResponse(response, fileInfo.contentType, System.IO.File.ReadAllBytes(filePath));
+                            response.WriteBinaryResponse( fileInfo.contentType, System.IO.File.ReadAllBytes(filePath));
                         }
                     }
                     else
                     {
                         // binary octet stream
-                        nac.WebServer.lib.HttpHelper.WriteBinaryResponse(response, "application/octet-stream", System.IO.File.ReadAllBytes(filePath));
+                        response.WriteBinaryResponse( "application/octet-stream", System.IO.File.ReadAllBytes(filePath));
                     }
                 }
                 else
                 {
                     log.Warn($"File Not Found: {filePath}");
-                    nac.WebServer.lib.HttpHelper.WriteTextResponse(response, "application/text", $"ERROR - No File Found at url [{request.Url.LocalPath}]");
+                    response.WriteTextResponse( "application/text", $"ERROR - No File Found at url [{request.Url.LocalPath}]");
                 }
 
 

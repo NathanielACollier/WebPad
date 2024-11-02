@@ -43,8 +43,7 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
 
             logEntries = new ObservableCollection<LogEntry>();
             logViewerCtrl.DataContext = logEntries;
-
-            nac.Logging.Logger.OnNewMessage += (_s, args) =>
+            nac.Logging.Appenders.Notification.Setup(onNewMessage: (args) =>
             {
                 this.Dispatcher.BeginInvoke(() =>
                 {
@@ -52,14 +51,15 @@ namespace WebPad.Dependencies.General.WPFUserControls.LogViewer
                     {
                         DateTime = DateTime.Now,
                         Message = args.Message,
-                        Level = args.Level,
+                        Level = args.Level.ToString(),
                         LoggerName = $"{args.CallingClassType.FullName}.{args.CallingMemberName}"
                     };
 
                     logEntries.Insert(0, newEntry); // insert at top so we don't have to do fancy scrolling
                     //LogEntries.Add(newEntry);
                 });
-            };
+            });
+
         }
 
 
